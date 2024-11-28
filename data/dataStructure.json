@@ -8,7 +8,7 @@
     "id": "asdhf23jk",
     "name": "basic course mentor",
     "byHour": true,
-    "time": "2:10:21",
+    "duration": "2:10:21",
     "price": 2342343,
     "categoryId": "234dsfdsf"
   },
@@ -20,12 +20,6 @@
     "email": "abolfazl@gmail.com",
     "password": "sdfkjh2k34hrk",
     "role": "USER | ADMIN"
-  },
-
-  "userTask": {
-    "id": "23423sfdf",
-    "userId": "234rsxcf",
-    "taskId": "dskfjh23k4"
   },
 
   "customTasks": {
