@@ -3,6 +3,7 @@ import { Box, Button } from "@mui/material";
 import React, { useState } from "react";
 
 import AddCategoryModal from "./AddCategoryModal";
+import AddTaskModal from "./AddTaskModal";
 import TasksTable from "./TasksTable";
 
 const tasks = [
@@ -50,6 +51,7 @@ const tasks = [
 
 export default function TaskContainer() {
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
+  const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
 
   return (
     <Box component={"section"}>
@@ -57,11 +59,14 @@ export default function TaskContainer() {
         <Button variant="contained" onClick={() => setAddCategoryModalOpen(true)}>
           ADD Category
         </Button>
-        <Button variant="contained">ADD Task</Button>
+        <Button variant="contained" onClick={() => setAddTaskModalOpen(true)}>
+          ADD Task
+        </Button>
       </Box>
       <TasksTable tasks={tasks} />
 
       <AddCategoryModal open={addCategoryModalOpen} setOpen={setAddCategoryModalOpen} />
+      <AddTaskModal open={addTaskModalOpen} setOpen={setAddTaskModalOpen} />
     </Box>
   );
 }

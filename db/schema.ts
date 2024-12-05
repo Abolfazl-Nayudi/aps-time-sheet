@@ -32,7 +32,7 @@ export const taskTable = pgTable("tasks", {
   name: text().notNull(),
   price: numeric("price", { precision: 10, scale: 2 }),
   isByHour: boolean().default(false).notNull(),
-  hourPrice: numeric("price", { precision: 10, scale: 2 }),
+  hourPrice: numeric("hourPrice", { precision: 10, scale: 2 }),
   categoryId: uuid("category_id")
     .references(() => categoryTable.id)
     .notNull(),

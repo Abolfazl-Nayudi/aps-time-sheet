@@ -1,9 +1,18 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { FormControl, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
+
+import SnackBarComponent from "../SnackBar";
+import { createNewTask } from "./actions/createNewTask";
+import { getCategoryData } from "./actions/getCategoryData";
 const style = {
   position: "absolute",
   top: "50%",
@@ -11,34 +20,184 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius: "5px",
   boxShadow: 24,
   p: 4,
 };
 
-export default function BasicModal() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+type PropsType = {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export type AdminAddTaskFormSchemaType = z.infer<typeof AdminAddTaskFormSchema>;
+
+export default function AddTaskModal({ open, setOpen }: PropsType) {
+  const [checked, setChecked] = useState(false);
+  const [categoryError, setCategoryError] = useState("");
+  const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(AdminAddTaskFormSchema),
+    defaultValues: {
+      name: "",
+      price: "",
+      isByHour: false,
+      hourPrice: "",
+      categoryId: "",
+    },
+  });
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+    setValue("isByHour", event.target.checked);
+  };
+
+  const onSubmit = async (data: AdminAddTaskFormSchemaType) => {
+    const {
+      data: createdTask,
+      message,
+      status,
+    } = await createNewTask({
+      ...data,
+      price: data.isByHour ? null : data.price,
+      hourPrice: data.isByHour ? data.hourPrice : null,
+    });
+
+    if (status === "error") {
+      setErrorMessage(message);
+      return;
+    }
+
+    if (status !== "sucess") {
+      reset();
+      setOpen(false);
+      setOpenSnackBar(true);
+    }
+  };
+
+  useEffect(() => {
+    (async () => {
+      const { data, message, status } = await getCategoryData();
+      if (status === "error") {
+        setCategoryError(message);
+        return;
+      }
+
+      if (data) {
+        setCategoryData(data);
+      }
+    })();
+  }, []);
+
+  console.log(errors);
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
+          <Typography id="modal-modal-title" variant="h6" component="h2" textAlign={"center"} marginBottom={2}>
+            Add Task
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
+          <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Box>
+              {/* <Typography component={'label'}>Name: </Typography> */}
+              <TextField id="name" label="Task Name" variant="outlined" {...register("name")} fullWidth />
+              {errors.name && (
+                <Typography marginTop={"4px"} variant="body2" color={"crimson"}>
+                  {errors.name.message}
+                </Typography>
+              )}
+            </Box>
+
+            <Box display={"flex"} alignItems={"center"}>
+              <Typography>Is By Hour:</Typography>
+              <Switch checked={checked} onChange={handleChange} inputProps={{ "aria-label": "controlled" }} />
+            </Box>
+            <Box>
+              <TextField
+                id="price"
+                type="number"
+                label="Price"
+                disabled={checked}
+                {...register("price")}
+                variant="outlined"
+                fullWidth
+              />
+              {errors.price && (
+                <Typography marginTop={"4px"} variant="body2" color={"crimson"}>
+                  {errors.price.message}
+                </Typography>
+              )}
+            </Box>
+            <Box>
+              <TextField
+                id="hour-price"
+                type="number"
+                label="Hour Price"
+                disabled={!checked}
+                variant="outlined"
+                {...register("hourPrice")}
+                fullWidth
+              />
+              {errors.hourPrice && (
+                <Typography marginTop={"4px"} variant="body2" color={"crimson"}>
+                  {errors.hourPrice.message}
+                </Typography>
+              )}
+            </Box>
+            <Box>
+              <FormControl fullWidth>
+                <InputLabel id="category">Category</InputLabel>
+                <Select labelId="category" id="" label="category" defaultValue={""} {...register("categoryId")}>
+                  {categoryData?.map(({ id, name }) => {
+                    return (
+                      <MenuItem key={id} value={id}>
+                        {name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+              {errors.categoryId && (
+                <Typography color={"crimson"} variant="body2">
+                  {errors.categoryId.message}
+                </Typography>
+              )}
+              {categoryError && (
+                <Typography color={"crimson"} variant="body2">
+                  {categoryError}
+                </Typography>
+              )}
+            </Box>
+            <Box display={"flex"} flexDirection={"column"}>
+              <Button type="submit" variant="contained">
+                Add Task
+              </Button>
+            </Box>
+          </form>
+          {errorMessage && (
+            <Typography variant="body2" color={"crimson"}>
+              {errorMessage}
+            </Typography>
+          )}
         </Box>
       </Modal>
+      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task created successfully`} />
     </div>
   );
 }

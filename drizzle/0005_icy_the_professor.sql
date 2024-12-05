@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ADD COLUMN "hourPrice" numeric(10, 2);
