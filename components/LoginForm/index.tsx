@@ -1,23 +1,51 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
+// import { getServerSession } from "@/utils/authGetServerSession";
 import { LoginFormSchema, LoginFormValues } from "@/utils/zod/LoginFormSchema";
-
 const LoginForm: React.FC = () => {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Login Data: ", data);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const onSubmit = async ({ email, password }: LoginFormValues) => {
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      const res = await signIn("credentials", { email, password, redirect: false });
+      console.log(res);
+      console.log("hello");
+      if (res?.error) {
+        setErrorMessage(res.error);
+      }
+
+      if (res?.ok) {
+        setSuccessMessage("logged in successfully");
+        setTimeout(() => {
+          router.push("/");
+        }, 1000);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      }
+    }
   };
 
   return (
@@ -50,8 +78,14 @@ const LoginForm: React.FC = () => {
         error={!!errors.password}
         helperText={errors.password?.message}
       />
-      <Button type="submit" variant="contained" fullWidth>
-        Login
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        disabled={isSubmitting}
+        startIcon={isSubmitting && <CircularProgress size={20} color="inherit" />} // Add spinner
+      >
+        {isSubmitting ? "Signing up..." : "Signup"}
       </Button>
       <Typography variant="body2" textAlign="center">
         Don&apos;t have an account?{" "}
@@ -59,6 +93,17 @@ const LoginForm: React.FC = () => {
           Sign up
         </Link>
       </Typography>
+
+      {errorMessage && (
+        <Typography variant="body1" textAlign="center" color="crimson">
+          {errorMessage}
+        </Typography>
+      )}
+      {successMessage && (
+        <Typography variant="body1" textAlign="center" color="green">
+          {successMessage}
+        </Typography>
+      )}
     </Box>
   );
 };

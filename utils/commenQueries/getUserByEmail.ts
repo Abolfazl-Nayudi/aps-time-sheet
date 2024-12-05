@@ -10,7 +10,7 @@ const getUserByEmail = async (email: string) => {
   if (userData.length > 0) {
     return userData[0];
   } else {
-    null;
+    return null;
   }
 };
 

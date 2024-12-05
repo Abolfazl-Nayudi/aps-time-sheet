@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const Home = () => {
+const Home = async () => {
   return (
     <main>
       <h1>Hello APSignals</h1>

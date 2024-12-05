@@ -5,6 +5,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import type { Metadata } from "next";
 import React from "react";
 
+import NavbarComponent from "@/components/Navbar";
 import AuthSessionProvider from "@/context/AuthSessionProvider";
 import theme from "@/lib/theme/theme";
 import { getServerSession } from "@/utils/authGetServerSession";
@@ -29,7 +30,10 @@ const RootLayout = ({
       <body>
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
-            <AuthSessionProvider session={session}>{children}</AuthSessionProvider>
+            <AuthSessionProvider session={session}>
+              <NavbarComponent />
+              {children}
+            </AuthSessionProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>

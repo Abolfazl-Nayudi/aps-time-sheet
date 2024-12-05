@@ -33,6 +33,7 @@
     "e2e:open": "cd e2e && npm run cypress:open"
   },
   "dependencies": {
+    "@auth/drizzle-adapter": "^1.7.4",
     "@emotion/cache": "^11.13.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",

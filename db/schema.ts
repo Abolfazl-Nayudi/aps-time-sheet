@@ -12,9 +12,9 @@ export const userTable = pgTable("users", {
   role: roleEnum().default("USER").notNull(),
 });
 
-export const userRelations = relations(userTable, ({ many }) => ({
-  task: many(taskTable),
-  customTask: many(customTaskTable),
+export const usersRelations = relations(userTable, ({ many }) => ({
+  userTasks: many(userTaskTable),
+  customTasks: many(customTaskTable),
 }));
 
 export const categoryTable = pgTable("categories", {
@@ -33,7 +33,7 @@ export const taskTable = pgTable("tasks", {
   byHour: boolean().default(false).notNull(),
   duration: interval("duration"),
   date: date().notNull(),
-  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  price: numeric("price", { precision: 10, scale: 2 }),
   categoryId: uuid("category_id")
     .references(() => categoryTable.id)
     .notNull(),
@@ -42,15 +42,26 @@ export const taskTable = pgTable("tasks", {
     .notNull(),
 });
 
-export const taskRelations = relations(taskTable, ({ one }) => ({
-  category: one(categoryTable, {
-    fields: [taskTable.categoryId],
-    references: [categoryTable.id],
-  }),
-  user: one(userTable, {
-    fields: [taskTable.userId],
-    references: [userTable.id],
-  }),
+export const tasksRelations = relations(taskTable, ({ many }) => ({
+  userTasks: many(userTaskTable),
+}));
+
+export const userTaskTable = pgTable("user_tasks", {
+  id: uuid("id").defaultRandom().primaryKey().notNull(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => userTable.id),
+  taskId: uuid("taskId")
+    .notNull()
+    .references(() => taskTable.id),
+  duration: interval("duration"),
+  date: date().notNull(),
+  notes: text("notes"),
+});
+
+export const userTasksRelations = relations(userTaskTable, ({ one }) => ({
+  user: one(userTable, { fields: [userTaskTable.userId], references: [userTable.id] }),
+  task: one(taskTable, { fields: [userTaskTable.taskId], references: [taskTable.id] }),
 }));
 
 export const customTaskTable = pgTable("customTask", {
