@@ -30,33 +30,29 @@ export const categoryRelations = relations(categoryTable, ({ many }) => ({
 export const taskTable = pgTable("tasks", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   name: text().notNull(),
-  byHour: boolean().default(false).notNull(),
-  duration: interval("duration"),
-  date: date().notNull(),
   price: numeric("price", { precision: 10, scale: 2 }),
+  isByHour: boolean().default(false).notNull(),
+  hourPrice: numeric("price", { precision: 10, scale: 2 }),
   categoryId: uuid("category_id")
     .references(() => categoryTable.id)
     .notNull(),
-  userId: uuid("user_id")
-    .references(() => userTable.id)
-    .notNull(),
 });
 
-export const tasksRelations = relations(taskTable, ({ many }) => ({
-  userTasks: many(userTaskTable),
+export const tasksRelations = relations(taskTable, ({ one }) => ({
+  category: one(categoryTable, { fields: [taskTable.categoryId], references: [categoryTable.id] }),
 }));
 
 export const userTaskTable = pgTable("user_tasks", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  duration: interval("duration"),
+  date: date().notNull(),
+  notes: text("notes"),
   userId: uuid("userId")
     .notNull()
     .references(() => userTable.id),
   taskId: uuid("taskId")
     .notNull()
     .references(() => taskTable.id),
-  duration: interval("duration"),
-  date: date().notNull(),
-  notes: text("notes"),
 });
 
 export const userTasksRelations = relations(userTaskTable, ({ one }) => ({

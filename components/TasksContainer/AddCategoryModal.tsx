@@ -1,0 +1,97 @@
+"use client";
+
+import { TextField } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import SnackBarComponent from "../SnackBar";
+import { createNewCategory } from "./actions/createNewCategory";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  borderRadius: "5px",
+  boxShadow: 24,
+  p: 4,
+};
+
+type PropsType = {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function AddCategoryModal({ open, setOpen }: PropsType) {
+  const [categoryName, setCategoryName] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log("hi");
+    e.preventDefault();
+
+    setErrorMessage("");
+    setCategoryName("");
+
+    console.log(categoryName);
+    console.log(errorMessage);
+
+    if (categoryName.length > 1) {
+      const { data, message, status } = await createNewCategory(categoryName);
+
+      if (status === "error" && message === "unauthenticated") {
+        router.push("/");
+        return;
+      }
+
+      if (status === "error") return setErrorMessage(message);
+
+      setOpen(false);
+      setOpenSnackBar(true);
+    } else {
+      setErrorMessage("the category name should be more than 1 character");
+    }
+  };
+
+  return (
+    <div>
+      {/* <Button onClick={() => setOpen(true)}>Open modal</Button> */}
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{ border: 0, outline: 0 }}
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" textAlign={"center"} variant="h6" component="h2" marginBottom={2}>
+            Add Category
+          </Typography>
+          <form onSubmit={handleSubmit}>
+            <Box display={"flex"} flexDirection={"column"} gap={2}>
+              <TextField type="text" value={categoryName} onChange={e => setCategoryName(e.target.value)} />
+              <Button color="primary" variant="contained" type="submit">
+                Add
+              </Button>
+            </Box>
+          </form>
+          {errorMessage && (
+            <Typography variant="body2" marginTop={"1rem"} color={"crimson"}>
+              {errorMessage}
+            </Typography>
+          )}
+        </Box>
+      </Modal>
+      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`category created successfully`} />
+    </div>
+  );
+}
