@@ -9,16 +9,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
-type PropsType = {
-  id: number;
-  category: string;
-  task: string;
-  price: number | null;
-  isPerHour: boolean;
-  hourPrice: null | number;
-};
+import { TaskDataType } from ".";
 
-export default function TasksTable({ tasks }: { tasks: PropsType[] }) {
+export default function TasksTable({ tasks }: { tasks: TaskDataType[] }) {
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"} marginTop={"4rem"}>
       <Box width={900}>
@@ -31,13 +24,13 @@ export default function TasksTable({ tasks }: { tasks: PropsType[] }) {
                 <TableCell align="center">Price</TableCell>
                 <TableCell align="center">is Per Hour</TableCell>
                 <TableCell align="center">Hour Price</TableCell>
-                <TableCell align="center">َActions</TableCell>
+                <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {tasks?.map(({ category, hourPrice, id, isPerHour, price, task }) => (
+              {tasks?.map(({ categoryName, hourPrice, taskId, isByHour, price, taskName, categoryId }) => (
                 <TableRow
-                  key={id}
+                  key={taskId}
                   sx={{
                     cursor: "pointer",
                     "&:last-child td, &:last-child th": { border: 0 },
@@ -47,16 +40,16 @@ export default function TasksTable({ tasks }: { tasks: PropsType[] }) {
                   }}
                 >
                   <TableCell component="th" scope="row" align="center">
-                    {category}
+                    {categoryName}
                   </TableCell>
                   <TableCell component="th" scope="row" align="center">
-                    {task}
+                    {taskName}
                   </TableCell>
                   <TableCell component="th" scope="row" align="center">
                     {price ? price : "_"}
                   </TableCell>
                   <TableCell component="th" scope="row" align="center">
-                    {isPerHour ? "Yes" : "No"}
+                    {isByHour ? "Yes" : "No"}
                   </TableCell>
                   <TableCell align="center">{hourPrice ? hourPrice : "_"}</TableCell>
                   <TableCell align="center">

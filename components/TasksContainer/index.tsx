@@ -1,6 +1,8 @@
 "use client";
-import { Box, Button } from "@mui/material";
-import React, { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+
+import { getTaskData } from "@/utils/commenQueries/getTaskData";
 
 import AddCategoryModal from "./AddCategoryModal";
 import AddTaskModal from "./AddTaskModal";
@@ -49,9 +51,34 @@ const tasks = [
   },
 ];
 
+export type TaskDataType = {
+  taskId: string;
+  categoryId: string;
+  price: string | null;
+  isByHour: boolean;
+  hourPrice: string | null;
+  taskName: string;
+  categoryName: string;
+};
+
 export default function TaskContainer() {
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [taskData, setTaskData] = useState<TaskDataType[] | []>([]);
+  useEffect(() => {
+    (async () => {
+      const { data, message, status } = await getTaskData();
+
+      if (status === "error") {
+        setErrorMessage(message);
+        return;
+      }
+      if (data) {
+        setTaskData(data);
+      }
+    })();
+  }, []);
 
   return (
     <Box component={"section"}>
@@ -63,8 +90,12 @@ export default function TaskContainer() {
           ADD Task
         </Button>
       </Box>
-      <TasksTable tasks={tasks} />
-
+      <TasksTable tasks={taskData} />
+      {errorMessage && (
+        <Typography variant="body2" color={"crimson"}>
+          {errorMessage}
+        </Typography>
+      )}
       <AddCategoryModal open={addCategoryModalOpen} setOpen={setAddCategoryModalOpen} />
       <AddTaskModal open={addTaskModalOpen} setOpen={setAddTaskModalOpen} />
     </Box>
