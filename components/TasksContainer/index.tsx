@@ -97,7 +97,7 @@ export default function TaskContainer() {
         </Typography>
       )}
       <AddCategoryModal open={addCategoryModalOpen} setOpen={setAddCategoryModalOpen} />
-      <AddTaskModal open={addTaskModalOpen} setOpen={setAddTaskModalOpen} />
+      <AddTaskModal open={addTaskModalOpen} setOpen={setAddTaskModalOpen} setTasks={setTaskData} />
     </Box>
   );
 }

@@ -1,7 +1,9 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
-import { taskTable } from "@/db/schema";
+import { categoryTable, taskTable } from "@/db/schema";
 import { auth } from "@/utils/authOptions";
 
 type ArgType = {
@@ -20,11 +22,20 @@ export const createNewTask = async (data: ArgType) => {
     return { status: "error", message: "unauthenticated", data: null };
   }
 
-  const newCategory = await db.insert(taskTable).values(data);
+  const newTask = await db.insert(taskTable).values(data).returning();
 
-  if (!newCategory.rowCount) {
-    return { status: "error", message: "there is an error, try again", data: null };
+  if (!newTask.length) {
+    return { status: "error", message: "there is an error in creating task, try again", data: null };
   }
 
-  return { status: "success", message: "category created successfully", data: null };
+  const taskCategory = await db
+    .select({ categoryName: categoryTable.name })
+    .from(categoryTable)
+    .where(eq(categoryTable.id, newTask[0].categoryId));
+  console.log(taskCategory);
+  return {
+    status: "success",
+    message: "task created successfully",
+    data: { ...newTask[0], categoryName: taskCategory[0].categoryName },
+  };
 };

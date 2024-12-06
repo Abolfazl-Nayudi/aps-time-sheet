@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormControl, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
@@ -11,6 +11,7 @@ import { z } from "zod";
 import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
 
 import SnackBarComponent from "../SnackBar";
+import { TaskDataType } from ".";
 import { createNewTask } from "./actions/createNewTask";
 import { getCategoryData } from "./actions/getCategoryData";
 const style = {
@@ -28,17 +29,18 @@ const style = {
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setTasks: React.Dispatch<React.SetStateAction<[] | TaskDataType[]>>;
 };
 
 export type AdminAddTaskFormSchemaType = z.infer<typeof AdminAddTaskFormSchema>;
 
-export default function AddTaskModal({ open, setOpen }: PropsType) {
+export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
   const [checked, setChecked] = useState(false);
   const [categoryError, setCategoryError] = useState("");
   const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -63,6 +65,7 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
   };
 
   const onSubmit = async (data: AdminAddTaskFormSchemaType) => {
+    setIsLoading(true);
     const {
       data: createdTask,
       message,
@@ -79,10 +82,15 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
     }
 
     if (status !== "sucess") {
-      reset();
-      setOpen(false);
-      setOpenSnackBar(true);
+      if (createdTask) {
+        const { name, id, ...restOfData } = createdTask;
+        setTasks(tasks => [...tasks, { ...restOfData, taskName: name, taskId: id }]);
+        reset();
+        setOpen(false);
+        setOpenSnackBar(true);
+      }
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -183,8 +191,14 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
               )}
             </Box>
             <Box display={"flex"} flexDirection={"column"}>
-              <Button type="submit" variant="contained">
-                Add Task
+              <Button type="submit" variant="contained" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <CircularProgress /> Submitting...
+                  </>
+                ) : (
+                  "Add Task"
+                )}
               </Button>
             </Box>
           </form>
