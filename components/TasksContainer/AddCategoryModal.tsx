@@ -36,14 +36,10 @@ export default function AddCategoryModal({ open, setOpen }: PropsType) {
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("hi");
     e.preventDefault();
 
     setErrorMessage("");
     setCategoryName("");
-
-    console.log(categoryName);
-    console.log(errorMessage);
 
     if (categoryName.length > 1) {
       const { data, message, status } = await createNewCategory(categoryName);

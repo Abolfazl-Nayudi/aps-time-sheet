@@ -4,15 +4,17 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
 import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
 
 import SnackBarComponent from "../SnackBar";
-import { createNewTask } from "./actions/createNewTask";
+import { TaskDataType } from ".";
+import { editTaskAction } from "./actions/editTaskAction";
 import { getCategoryData } from "./actions/getCategoryData";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -25,19 +27,29 @@ const style = {
   p: 4,
 };
 
-type PropsType = {
+export type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  taskData: {
+    id: string;
+    name: string;
+    price: string | null;
+    isByHour: boolean;
+    hourPrice: string | null;
+    categoryId: string;
+    categoryName: string;
+  };
+  setTasks: React.Dispatch<React.SetStateAction<[] | TaskDataType[]>>;
 };
 
-export type AdminAddTaskFormSchemaType = z.infer<typeof AdminAddTaskFormSchema>;
-
-export default function AddTaskModal({ open, setOpen }: PropsType) {
+export default function EditTaskModal({ open, setOpen, taskData, setTasks }: PropsType) {
   const [checked, setChecked] = useState(false);
   const [categoryError, setCategoryError] = useState("");
   const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
+
+  const router = useRouter();
 
   const {
     register,
@@ -49,11 +61,7 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
   } = useForm({
     resolver: zodResolver(AdminAddTaskFormSchema),
     defaultValues: {
-      name: "",
-      price: "",
-      isByHour: false,
-      hourPrice: "",
-      categoryId: "",
+      ...taskData,
     },
   });
 
@@ -62,27 +70,52 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
     setValue("isByHour", event.target.checked);
   };
 
-  const onSubmit = async (data: AdminAddTaskFormSchemaType) => {
+  const onSubmit = async (data: PropsType["taskData"]) => {
     const {
-      data: createdTask,
+      data: editedTask,
       message,
       status,
-    } = await createNewTask({
+    } = await editTaskAction({
       ...data,
       price: data.isByHour ? null : data.price,
       hourPrice: data.isByHour ? data.hourPrice : null,
+      id: taskData.id,
     });
 
+    if (status === "error" && message === "unauthenticated") {
+      router.push("/");
+      return;
+    }
     if (status === "error") {
       setErrorMessage(message);
       return;
     }
 
     if (status !== "sucess") {
+      setTasks(tasks => {
+        return tasks.map(task => {
+          if (task.taskId === editedTask?.id) {
+            const { categoryId, hourPrice, id, isByHour, name, price } = editedTask;
+            return {
+              taskId: id,
+              taskName: name,
+              categoryId,
+              price,
+              hourPrice,
+              isByHour,
+              categoryName: taskData.categoryName,
+            };
+          }
+          return task;
+        });
+      });
+
       reset();
       setOpen(false);
       setOpenSnackBar(true);
     }
+
+    console.log(data);
   };
 
   useEffect(() => {
@@ -99,6 +132,10 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
     })();
   }, []);
 
+  useEffect(() => {
+    reset(taskData); // Reset the form with new data
+  }, [taskData, reset]);
+
   return (
     <div>
       <Modal
@@ -113,7 +150,6 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <Box>
-              {/* <Typography component={'label'}>Name: </Typography> */}
               <TextField id="name" label="Task Name" variant="outlined" {...register("name")} fullWidth />
               {errors.name && (
                 <Typography marginTop={"4px"} variant="body2" color={"crimson"}>
@@ -124,7 +160,11 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
 
             <Box display={"flex"} alignItems={"center"}>
               <Typography>Is By Hour:</Typography>
-              <Switch checked={checked} onChange={handleChange} inputProps={{ "aria-label": "controlled" }} />
+              <Switch
+                defaultChecked={taskData.isByHour}
+                onChange={handleChange}
+                inputProps={{ "aria-label": "controlled" }}
+              />
             </Box>
             <Box>
               <TextField
@@ -161,7 +201,13 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
             <Box>
               <FormControl fullWidth>
                 <InputLabel id="category">Category</InputLabel>
-                <Select labelId="category" id="" label="category" defaultValue={""} {...register("categoryId")}>
+                <Select
+                  labelId="category"
+                  id=""
+                  label="category"
+                  defaultValue={taskData.categoryId}
+                  {...register("categoryId")}
+                >
                   {categoryData?.map(({ id, name }) => {
                     return (
                       <MenuItem key={id} value={id}>
@@ -195,7 +241,7 @@ export default function AddTaskModal({ open, setOpen }: PropsType) {
           )}
         </Box>
       </Modal>
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task created successfully`} />
+      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task edited successfully`} />
     </div>
   );
 }

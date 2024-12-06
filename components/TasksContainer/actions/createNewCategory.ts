@@ -17,7 +17,6 @@ export const createNewCategory = async (name: string) => {
   if (!newCategory.rowCount) {
     return { status: "error", message: "there is an error, try again", data: null };
   }
-  console.log("new category", newCategory);
 
   return { status: "success", message: "category created successfully", data: null };
 };

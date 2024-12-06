@@ -90,7 +90,7 @@ export default function TaskContainer() {
           ADD Task
         </Button>
       </Box>
-      <TasksTable tasks={taskData} />
+      <TasksTable tasks={taskData} setTasks={setTaskData} />
       {errorMessage && (
         <Typography variant="body2" color={"crimson"}>
           {errorMessage}

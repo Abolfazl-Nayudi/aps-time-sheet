@@ -74,7 +74,6 @@ export async function auth(
 ) {
   unstable_noStore();
   const session = await getServerSession(...args, authOption);
-  console.log("in auth function", session);
   return { getUser: () => session?.user && { userId: session.user.userId, role: session.user.role } };
 }
 

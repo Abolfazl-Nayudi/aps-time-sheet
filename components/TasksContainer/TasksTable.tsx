@@ -8,10 +8,38 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { useState } from "react";
 
 import { TaskDataType } from ".";
+import EditTaskModal from "./EditTaskModal";
 
-export default function TasksTable({ tasks }: { tasks: TaskDataType[] }) {
+type StateType = {
+  name: string;
+  price: string | null;
+  isByHour: boolean;
+  hourPrice: string | null;
+  categoryId: string;
+  id: string;
+  categoryName: string;
+};
+
+type PropsType = {
+  tasks: TaskDataType[];
+  setTasks: React.Dispatch<React.SetStateAction<[] | TaskDataType[]>>;
+};
+
+export default function TasksTable({ tasks, setTasks }: PropsType) {
+  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
+  const [editModalData, setEditModalData] = useState<StateType>({
+    name: "",
+    price: "",
+    isByHour: false,
+    hourPrice: "",
+    categoryId: "",
+    id: "",
+    categoryName: "",
+  });
+
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"} marginTop={"4rem"}>
       <Box width={900}>
@@ -53,7 +81,23 @@ export default function TasksTable({ tasks }: { tasks: TaskDataType[] }) {
                   </TableCell>
                   <TableCell align="center">{hourPrice ? hourPrice : "_"}</TableCell>
                   <TableCell align="center">
-                    <Button color="primary" variant="contained" sx={{ marginRight: 2 }}>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      sx={{ marginRight: 2 }}
+                      onClick={() => {
+                        setEditModalData({
+                          categoryId,
+                          price: price ? price : "",
+                          isByHour,
+                          hourPrice: hourPrice ? hourPrice : "",
+                          id: taskId,
+                          name: taskName,
+                          categoryName,
+                        });
+                        setEditTaskModalOpen(true);
+                      }}
+                    >
                       Edit
                     </Button>
                     <Button color="error" variant="contained">
@@ -66,6 +110,12 @@ export default function TasksTable({ tasks }: { tasks: TaskDataType[] }) {
           </Table>
         </TableContainer>
       </Box>
+      <EditTaskModal
+        open={editTaskModalOpen}
+        setOpen={setEditTaskModalOpen}
+        taskData={editModalData}
+        setTasks={setTasks}
+      />
     </Box>
   );
 }

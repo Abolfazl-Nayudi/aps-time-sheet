@@ -29,8 +29,6 @@ const LoginForm: React.FC = () => {
     setSuccessMessage("");
     try {
       const res = await signIn("credentials", { email, password, redirect: false });
-      console.log(res);
-      console.log("hello");
       if (res?.error) {
         setErrorMessage(res.error);
       }

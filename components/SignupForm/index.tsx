@@ -30,9 +30,7 @@ const SignupForm: React.FC = () => {
 
     try {
       const response = await insertUserData(data);
-      console.log(response);
       if (response.status === 201) {
-        console.log(response.message);
         setSuccessMessage(response.message);
         setTimeout(() => {
           reset();

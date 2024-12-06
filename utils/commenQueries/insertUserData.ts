@@ -10,7 +10,6 @@ import { SignupFormSchema, SignupFormValues } from "../zod/SignupFormSchema";
 
 const insertUserData = async (data: SignupFormValues) => {
   const { success, error } = SignupFormSchema.safeParse(data);
-  console.log(success, error);
   if (error) {
     throw new Error("failed to validate the fields");
   }
