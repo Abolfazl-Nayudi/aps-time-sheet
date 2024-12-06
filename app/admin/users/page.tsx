@@ -7,7 +7,7 @@ const UsersPage = async () => {
   const session = await auth();
   const user = session.getUser();
   if (!user || user?.role !== "ADMIN") {
-    redirect("/login");
+    redirect("/");
   }
 
   return (
