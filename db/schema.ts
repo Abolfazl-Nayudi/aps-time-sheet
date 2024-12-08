@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, integer, interval, numeric, pgEnum, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, date, interval, numeric, pgEnum, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 
 const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
 
