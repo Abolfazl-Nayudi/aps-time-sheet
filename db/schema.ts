@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, interval, numeric, pgEnum, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, date, numeric, pgEnum, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 
 const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
 
@@ -38,13 +38,15 @@ export const taskTable = pgTable("tasks", {
     .notNull(),
 });
 
-export const tasksRelations = relations(taskTable, ({ one }) => ({
+export const tasksRelations = relations(taskTable, ({ one, many }) => ({
   category: one(categoryTable, { fields: [taskTable.categoryId], references: [categoryTable.id] }),
+  userTask: many(userTaskTable),
 }));
 
 export const userTaskTable = pgTable("user_tasks", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
-  duration: interval("duration"),
+  startTime: text().notNull(),
+  endTime: text().notNull(),
   date: date().notNull(),
   notes: text("notes"),
   userId: uuid("userId")
@@ -63,7 +65,8 @@ export const userTasksRelations = relations(userTaskTable, ({ one }) => ({
 export const customTaskTable = pgTable("customTask", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
   name: text().notNull(),
-  duration: interval("duration"),
+  startTime: text().notNull(),
+  endTime: text().notNull(),
   date: date().notNull(),
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
   categoryId: uuid("category_id")

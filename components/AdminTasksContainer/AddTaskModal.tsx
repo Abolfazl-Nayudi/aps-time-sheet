@@ -45,7 +45,6 @@ export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
     register,
     handleSubmit,
     reset,
-    watch,
     setValue,
     formState: { errors },
   } = useForm({

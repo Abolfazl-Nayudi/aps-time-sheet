@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1732813014782,
-      "tag": "0000_complex_blockbuster",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1732813348458,
-      "tag": "0001_rare_taskmaster",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1733393567859,
-      "tag": "0002_watery_kang",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1733399670440,
-      "tag": "0003_normal_serpent_society",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1733401048278,
-      "tag": "0004_cuddly_moon_knight",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1733415054806,
-      "tag": "0005_icy_the_professor",
+      "when": 1733767851810,
+      "tag": "0000_gray_gauntlet",
       "breakpoints": true
     }
   ]

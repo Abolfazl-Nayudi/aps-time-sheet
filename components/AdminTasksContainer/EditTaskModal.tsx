@@ -55,7 +55,6 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
     register,
     handleSubmit,
     reset,
-    watch,
     setValue,
     formState: { errors },
   } = useForm({

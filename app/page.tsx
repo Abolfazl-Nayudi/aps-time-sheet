@@ -5,10 +5,10 @@ const Home = async () => {
     <main>
       <h1>Hello APSignals</h1>
       {/* <Link href="/about">About</Link> */}
-
       <Link href="/signup">signup</Link>
       <br />
       <Link href="/login">login</Link>
+      helllllllo
     </main>
   );
 };

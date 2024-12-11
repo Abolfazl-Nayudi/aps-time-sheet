@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -70,6 +70,11 @@ export default function TasksTable({ tasks, setTasks }: PropsType) {
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"} marginTop={"4rem"}>
       <Box width={900}>
+        {errorMessage && (
+          <Typography variant="body2" color={"crimson"}>
+            {errorMessage}
+          </Typography>
+        )}
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>

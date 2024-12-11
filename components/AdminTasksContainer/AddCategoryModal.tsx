@@ -42,7 +42,7 @@ export default function AddCategoryModal({ open, setOpen }: PropsType) {
     setCategoryName("");
 
     if (categoryName.length > 1) {
-      const { data, message, status } = await createNewCategory(categoryName);
+      const { message, status } = await createNewCategory(categoryName);
 
       if (status === "error" && message === "unauthenticated") {
         router.push("/");

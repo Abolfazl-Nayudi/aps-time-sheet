@@ -16,44 +16,6 @@ import avatar from "@/public/avatar.png";
 
 import { getUsersList } from "./actions/getUsersList";
 
-const fakeUsers = [
-  {
-    id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: 2,
-    firstName: "Jane",
-    lastName: "Smith",
-    email: "jane.smith@example.com",
-    avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-  },
-  {
-    id: 3,
-    firstName: "Alice",
-    lastName: "Johnson",
-    email: "alice.johnson@example.com",
-    avatar: "https://randomuser.me/api/portraits/women/3.jpg",
-  },
-  {
-    id: 4,
-    firstName: "Bob",
-    lastName: "Brown",
-    email: "bob.brown@example.com",
-    avatar: "https://randomuser.me/api/portraits/men/4.jpg",
-  },
-  {
-    id: 5,
-    firstName: "Emma",
-    lastName: "Davis",
-    email: "emma.davis@example.com",
-    avatar: "https://randomuser.me/api/portraits/women/5.jpg",
-  },
-];
-
 type UsersData = {
   firstName: string;
   lastName: string;
@@ -107,7 +69,7 @@ export default function AdminUsersList() {
             <TableBody>
               {usersData?.map(({ email, firstName, lastName, id }) => (
                 <TableRow
-                  onClick={e => handleClick(id)}
+                  onClick={() => handleClick(id)}
                   key={id}
                   sx={{
                     cursor: "pointer",

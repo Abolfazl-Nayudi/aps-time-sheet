@@ -8,49 +8,6 @@ import AddCategoryModal from "./AddCategoryModal";
 import AddTaskModal from "./AddTaskModal";
 import TasksTable from "./TasksTable";
 
-const tasks = [
-  {
-    id: 1,
-    category: "Development",
-    task: "Build login page",
-    price: 1000,
-    isPerHour: false,
-    hourPrice: null,
-  },
-  {
-    id: 2,
-    category: "Design",
-    task: "Create logo design",
-    price: 500,
-    isPerHour: true,
-    hourPrice: 100,
-  },
-  {
-    id: 3,
-    category: "Testing",
-    task: "Perform unit testing",
-    price: 800,
-    isPerHour: false,
-    hourPrice: null,
-  },
-  {
-    id: 4,
-    category: "Maintenance",
-    task: "Fix website bugs",
-    price: null,
-    isPerHour: true,
-    hourPrice: 150,
-  },
-  {
-    id: 5,
-    category: "Consulting",
-    task: "Project planning session",
-    price: 2000,
-    isPerHour: false,
-    hourPrice: null,
-  },
-];
-
 export type TaskDataType = {
   taskId: string;
   categoryId: string;
@@ -61,7 +18,7 @@ export type TaskDataType = {
   categoryName: string;
 };
 
-export default function TaskContainer() {
+export default function AdminTaskContainer() {
   const [addCategoryModalOpen, setAddCategoryModalOpen] = useState(false);
   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");

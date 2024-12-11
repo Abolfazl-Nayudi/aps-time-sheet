@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import React from "react";
 
-import TaskContainer from "@/components/TasksContainer";
+import AdminTaskContainer from "@/components/AdminTasksContainer";
 import { auth } from "@/utils/authOptions";
 
 export default async function page() {
@@ -13,7 +13,7 @@ export default async function page() {
 
   return (
     <>
-      <TaskContainer />
+      <AdminTaskContainer />
     </>
   );
 }
