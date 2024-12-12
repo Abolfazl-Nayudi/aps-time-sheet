@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import { compareAsc, format, parse, parseISO } from "date-fns";
+import { add, compareAsc, format, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -13,9 +13,8 @@ import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
 import { getCategoryData } from "../AdminTasksContainer/actions/getCategoryData";
 import SnackBarComponent from "../SnackBar";
-import { UserTaskDataType } from ".";
-import { createUserTaskAction } from "./actions/createUserTaskAction";
-import { getTasksOfOneCategory } from "./actions/getTasksOfOneCategory";
+import { CustomTaskDataType } from ".";
+import { createUserCustomTaskAction } from "./actions/createUserCustomTaskAction";
 
 const style = {
   position: "absolute",
@@ -32,32 +31,26 @@ const style = {
 type PropsType = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  userTasks: UserTaskDataType[];
-  setUserTasks: Dispatch<SetStateAction<[] | UserTaskDataType[]>>;
+  userCustomTasks: CustomTaskDataType[];
+  setUserCustomTasks: Dispatch<SetStateAction<[] | CustomTaskDataType[]>>;
 };
 
-type CategoryTasksDataType = {
-  categoryId: string;
-  isByHour: boolean;
-  name: string;
-  id: string;
-};
-
+const localStartTime = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+const localEndTime = add(new Date(), { minutes: 1 }).toLocaleTimeString("en-US", {
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
 const formDataInitialValue = {
   selectedCategory: "",
-  selectedTask: {
-    categoryId: "",
-    isByHour: false,
-    name: "",
-    id: "",
-  },
+  taskName: "",
   date: new Date(),
-  startTime: "",
-  endTime: "",
+  startTime: localStartTime,
+  endTime: localEndTime,
   notes: "",
 };
 
-export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsType) {
+export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTasks, userCustomTasks }: PropsType) {
   const router = useRouter();
 
   const [errorMessage, setErrorMessage] = useState({
@@ -69,7 +62,6 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
     general: "",
   });
   const [categoryData, setCategoryData] = useState<{ id: string; name: string }[] | []>([]);
-  const [categoryTasks, setCategoryTasks] = useState<CategoryTasksDataType[] | []>([]);
   const [formData, setFormData] = useState(formDataInitialValue);
   const [duration, setDuration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -79,11 +71,8 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
     setFormData(data => ({ ...data, selectedCategory: event.target.value as string }));
   };
 
-  const handleSelectTask = (event: SelectChangeEvent) => {
-    setFormData(data => ({ ...data, selectedTask: JSON.parse(event.target.value) }));
-  };
-
   const handleDuration = (value: string, type: "end" | "start") => {
+    setErrorMessage(errors => ({ ...errors, startTime: "", endTime: "" }));
     const parsed = parse(value, "HH:mm", new Date());
     if (type === "start") {
       if (isNaN(parsed.getTime())) {
@@ -116,14 +105,14 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
   const onSubmit = async (e: React.FormEvent) => {
     setIsLoading(true);
     e.preventDefault();
-
-    const { date, endTime, notes, selectedTask, startTime } = formData;
-    const { data, message, status } = await createUserTaskAction({
+    const { date, endTime, notes, taskName, startTime, selectedCategory } = formData;
+    const { data, message, status } = await createUserCustomTaskAction({
       startTime,
       endTime,
       date,
       notes,
-      taskId: selectedTask.id,
+      name: taskName,
+      categoryId: selectedCategory,
     });
 
     if (status === "error" && message === "unauthenticated") {
@@ -131,36 +120,32 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
       setIsLoading(false);
       return;
     }
-
     if (status === "error") {
       setErrorMessage(errors => ({ ...errors, general: message }));
       setIsLoading(false);
       return;
     }
 
+    console.log(data);
     if (data) {
-      const { date, endTime, notes, startTime, taskId, userId, id } = data;
+      const { categoryId, date, endTime, id, name, startTime, userId } = data;
       setIsLoading(false);
       setFormData(formDataInitialValue);
-      setUserTasks(tasks => {
+      setUserCustomTasks(tasks => {
         const newData = [
           ...tasks,
           {
-            taskId,
-            userId,
+            categoryId,
             date,
-            endTime,
             startTime,
-            notes,
-            categoryId: formData.selectedCategory,
+            endTime,
+            customTaskName: name,
+            customTaskId: id,
+            userId,
             categoryName: categoryData.filter(category => formData.selectedCategory === category.id)[0].name,
-            isByHour: selectedTask.isByHour,
-            taskName: selectedTask.name,
-            userTaskId: id,
           },
         ];
-
-        return newData.sort((a, b) => {
+        const sortedData = newData.sort((a, b) => {
           const dateComparison = compareAsc(parseISO(a.date), parseISO(b.date));
           if (dateComparison !== 0) return dateComparison;
 
@@ -169,6 +154,8 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
           const timeB = parse(b.startTime, "HH:mm", new Date());
           return compareAsc(timeA, timeB);
         });
+
+        return sortedData;
       });
       setOpenSnackBar(true);
       setOpen(false);
@@ -188,22 +175,6 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
       }
     })();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (formData.selectedCategory) {
-        const { data, message, status } = await getTasksOfOneCategory(formData.selectedCategory);
-        if (status === "error") {
-          setErrorMessage(errorObj => ({ ...errorObj, taskError: message }));
-          return;
-        }
-
-        if (data) {
-          setCategoryTasks(data);
-        }
-      }
-    })();
-  }, [formData.selectedCategory]);
 
   return (
     <div>
@@ -252,25 +223,11 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
 
               {/* ---------------------------tasks----------------------- */}
               <Box>
-                <FormControl fullWidth>
-                  <InputLabel id="task">Tasks</InputLabel>
-                  <Select
-                    labelId="task"
-                    id="task"
-                    value={JSON.stringify(formData.selectedTask)}
-                    label="Tasks"
-                    defaultValue=""
-                    onChange={handleSelectTask}
-                  >
-                    {categoryTasks?.map(task => {
-                      return (
-                        <MenuItem key={task.id} value={JSON.stringify(task)}>
-                          {task.name}
-                        </MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
+                <TextField
+                  label="Task Name"
+                  onChange={e => setFormData(data => ({ ...data, taskName: e.target.value }))}
+                  fullWidth
+                />
                 {errorMessage.task && (
                   <Typography variant="body2" color={"crimson"}>
                     {errorMessage.task}
@@ -278,21 +235,24 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
                 )}
               </Box>
 
-              {formData.selectedTask.isByHour && (
+              {
                 <Box display={"flex"} gap={"1rem"} alignItems={"center"}>
                   <TextField
                     label="start (hh:mm)"
                     // value={formData.startTime}
+                    defaultValue={formData.startTime}
                     onChange={e => handleDuration(e.target.value, "start")}
-                    // error={error}
-                    // helperText={error ? "Invalid duration format. Use hh:mm." : ""}
+                    error={!!errorMessage.startTime}
+                    helperText={errorMessage.startTime ? errorMessage.startTime : ""}
                     placeholder="hh:mm"
                   />
                   <TextField
                     label="end (hh:mm)"
                     // value={formData.endTime}
+                    defaultValue={formData.endTime}
                     onChange={e => handleDuration(e.target.value, "end")}
-                    // error={error}
+                    error={!!errorMessage.endTime}
+                    helperText={errorMessage.endTime ? errorMessage.endTime : ""}
                     // helperText={error ? "Invalid duration format. Use hh:mm." : ""}
                     placeholder="hh:mm"
                   />
@@ -305,7 +265,7 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
 
                   <Typography>{duration ? duration : "??:??"}</Typography>
                 </Box>
-              )}
+              }
               <Box>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker

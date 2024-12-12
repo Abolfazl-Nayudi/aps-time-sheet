@@ -25,10 +25,22 @@ export const getUserTasksAction = async () => {
     const { tasks, user_tasks, categories } = task;
 
     const { categoryId, name: taskName, isByHour } = tasks;
-    const { date, endTime, startTime, notes, taskId, userId } = user_tasks;
+    const { date, endTime, startTime, notes, id: userTaskId, userId, taskId } = user_tasks;
     const { name: categoryName } = categories;
 
-    return { userId, categoryId, categoryName, taskId, taskName, isByHour, endTime, startTime, date, notes };
+    return {
+      userId,
+      categoryId,
+      categoryName,
+      taskId,
+      taskName,
+      isByHour,
+      endTime,
+      startTime,
+      date,
+      notes,
+      userTaskId,
+    };
   });
 
   return { status: "success", message: "", data: filteredData };

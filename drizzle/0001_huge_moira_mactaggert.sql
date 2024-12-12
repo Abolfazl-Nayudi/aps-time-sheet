@@ -1,0 +1,1 @@
+ALTER TABLE "customTask" DROP COLUMN IF EXISTS "price";

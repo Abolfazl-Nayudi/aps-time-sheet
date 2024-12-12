@@ -1,6 +1,7 @@
 import { addDays, differenceInSeconds, format, parse } from "date-fns";
 
 const timeGapCalculator = (start: string, end: string) => {
+  console.log(start, end);
   console.log("hi");
   const startTimeParsed = parse(start, "HH:mm", new Date());
   const endTimeParsed = parse(end, "HH:mm", new Date());
@@ -21,7 +22,7 @@ const timeGapCalculator = (start: string, end: string) => {
   const hours = Math.floor(secondsDifference / 3600);
   const minutes = Math.floor((secondsDifference % 3600) / 60);
   //   const seconds = secondsDifference % 60;
-  console.log(format(new Date(0, 0, 0, hours, minutes, 0), "HH:mm"));
+  // console.log(format(new Date(0, 0, 0, hours, minutes, 0), "HH:mm"));
   return { status: "success", data: format(new Date(0, 0, 0, hours, minutes, 0), "HH:mm") };
 };
 

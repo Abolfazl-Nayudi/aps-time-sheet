@@ -8,6 +8,13 @@
       "when": 1733767851810,
       "tag": "0000_gray_gauntlet",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1733936129818,
+      "tag": "0001_huge_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }

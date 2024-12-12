@@ -68,7 +68,7 @@ export const customTaskTable = pgTable("customTask", {
   startTime: text().notNull(),
   endTime: text().notNull(),
   date: date().notNull(),
-  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  // price: numeric("price", { precision: 10, scale: 2 }).notNull(),
   categoryId: uuid("category_id")
     .references(() => categoryTable.id)
     .notNull(),
