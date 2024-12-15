@@ -1,6 +1,16 @@
-import UserTasksContainer from "@/components/UserTasksContainer";
+import { redirect } from "next/navigation";
 
-const UserTasksPage = () => {
+import UserTasksContainer from "@/components/UserTasksContainer";
+import { auth } from "@/utils/authOptions";
+
+const UserTasksPage = async () => {
+  const { getUser } = await auth();
+  const user = getUser();
+
+  if (!user || !user?.userId) {
+    redirect("/");
+  }
+
   return (
     <>
       <UserTasksContainer />

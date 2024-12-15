@@ -36,7 +36,8 @@ const LoginForm: React.FC = () => {
       if (res?.ok) {
         setSuccessMessage("logged in successfully");
         setTimeout(() => {
-          router.push("/");
+          // router.push("/");
+          window.location.replace("/");
         }, 1000);
       }
     } catch (error: unknown) {

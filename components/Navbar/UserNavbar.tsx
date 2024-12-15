@@ -27,12 +27,12 @@ interface Props {
 const drawerWidth = 240;
 const navItems = [
   { name: "Home", path: "/" },
-  { name: "Users", path: "/admin/users" },
-  { name: "Tasks", path: "/admin/tasks" },
+  //   { name: "Users", path: "/admin/users" },
+  { name: "Tasks", path: "/dashboard/tasks" },
 ];
 // const navItems = ["Home", "About", "Contact"];
 
-export default function NavbarComponent(props: Props) {
+export default function UserNavbarComponent(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 

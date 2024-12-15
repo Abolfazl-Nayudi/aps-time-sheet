@@ -109,7 +109,7 @@ const UserTasksContainer = () => {
 
   return (
     <>
-      <Box component={"section"}>
+      <Box component={"section"} marginBottom={10}>
         <Box display={"flex"} justifyContent={"center"} marginTop={"4rem"} gap={"10px"}>
           <Button variant="contained" onClick={() => setOpenUserAddTaskModal(true)}>
             Add Task
