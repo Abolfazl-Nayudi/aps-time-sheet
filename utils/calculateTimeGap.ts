@@ -1,8 +1,6 @@
 import { addDays, differenceInSeconds, format, parse } from "date-fns";
 
 const timeGapCalculator = (start: string, end: string) => {
-  console.log(start, end);
-  console.log("hi");
   const startTimeParsed = parse(start, "HH:mm", new Date());
   const endTimeParsed = parse(end, "HH:mm", new Date());
 
@@ -12,7 +10,6 @@ const timeGapCalculator = (start: string, end: string) => {
   } else {
     secondsDifference = differenceInSeconds(endTimeParsed, startTimeParsed);
   }
-  console.log(secondsDifference);
 
   if (secondsDifference < 0) {
     return { status: "error", data: "End time must be after start time" };
