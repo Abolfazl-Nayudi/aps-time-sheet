@@ -7,7 +7,6 @@ import { auth } from "@/utils/authOptions";
 const Home = async () => {
   const { getUser } = await auth();
   const user = getUser();
-  console.log(user);
   return (
     <Box component={"section"}>
       <Box marginTop={"10rem"} display={"flex"} flexDirection={"column"} alignItems={"center"} gap={2}>

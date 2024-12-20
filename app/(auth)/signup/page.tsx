@@ -3,7 +3,7 @@ import SignupForm from "@/components/SignupForm";
 const signupPage = () => {
   return (
     <>
-      <SignupForm />
+      <SignupForm type="USER" />
     </>
   );
 };

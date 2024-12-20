@@ -1,6 +1,8 @@
+import { Box } from "@mui/material";
 import { redirect } from "next/navigation";
 
 import AdminUsersList from "@/components/AdminUserList";
+import SignupForm from "@/components/SignupForm";
 import { auth } from "@/utils/authOptions";
 
 const UsersPage = async () => {
@@ -12,6 +14,8 @@ const UsersPage = async () => {
 
   return (
     <>
+      <SignupForm type="ADMIN" />
+      <Box marginBottom={5} />
       <AdminUsersList />
     </>
   );

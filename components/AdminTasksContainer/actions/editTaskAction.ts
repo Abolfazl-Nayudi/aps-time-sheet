@@ -9,7 +9,6 @@ import { auth } from "@/utils/authOptions";
 import { PropsType } from "../EditTaskModal";
 
 export const editTaskAction = async (taskData: PropsType["taskData"]) => {
-  console.log("in action", taskData);
   const { getUser } = await auth();
   const user = getUser();
 
@@ -21,7 +20,6 @@ export const editTaskAction = async (taskData: PropsType["taskData"]) => {
 
   const updatedTask = await db.update(taskTable).set(restOfTaskData).where(eq(taskTable.id, id)).returning();
 
-  console.log("updatedTask", updatedTask);
   if (!updatedTask.length) {
     return { status: "error", message: "there is an error in edtting task, try again", data: null };
   }

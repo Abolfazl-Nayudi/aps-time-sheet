@@ -17,8 +17,6 @@ const getSheetNames = async () => {
     spreadsheetId: process.env.GOOGLE_SHEET_ID, // Replace with your spreadsheet ID
   });
 
-  console.log(response.data.sheets);
-
   // Extract and filter sheet names
   const sheetNames = response.data.sheets
     ?.map(sheet => sheet.properties?.title)

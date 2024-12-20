@@ -32,7 +32,6 @@ export const createNewTask = async (data: ArgType) => {
     .select({ categoryName: categoryTable.name })
     .from(categoryTable)
     .where(eq(categoryTable.id, newTask[0].categoryId));
-  console.log(taskCategory);
   return {
     status: "success",
     message: "task created successfully",

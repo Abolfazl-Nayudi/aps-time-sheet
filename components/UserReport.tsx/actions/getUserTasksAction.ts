@@ -5,6 +5,8 @@ import { db } from "@/db";
 import { categoryTable, taskTable, userTable, userTaskTable } from "@/db/schema";
 
 export const getUserTasksAction = async (userId: string) => {
+  const userData = await db.select().from(userTable).where(eq(userTable.id, userId));
+
   const userTasksData = await db
     .select()
     .from(userTable)
@@ -35,8 +37,7 @@ export const getUserTasksAction = async (userId: string) => {
       userTaskId,
     };
   });
-
-  const { email, firstName, id, lastName } = userTasksData[0].users;
+  const { email, firstName, id, lastName } = userData[0];
 
   return { status: "success", message: "", data: { taskData: filteredData, user: { id, firstName, lastName, email } } };
 };

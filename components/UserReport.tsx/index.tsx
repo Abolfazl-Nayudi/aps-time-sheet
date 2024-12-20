@@ -107,7 +107,7 @@ const UserReport = ({ userId }: { userId: string }) => {
         data: customTaskData,
         message: customTaskMessage,
         status: customTaskStatus,
-      } = await getUserCustomTasksAction();
+      } = await getUserCustomTasksAction(userId);
 
       if (customTaskStatus === "error" && customTaskMessage === "unauthenticated") {
         router.push("/");

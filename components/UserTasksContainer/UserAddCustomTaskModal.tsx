@@ -126,7 +126,6 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
       return;
     }
 
-    console.log(data);
     if (data) {
       const { categoryId, date, endTime, id, name, startTime, userId } = data;
       setIsLoading(false);

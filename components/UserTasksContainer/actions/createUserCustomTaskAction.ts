@@ -21,8 +21,6 @@ export const createUserCustomTaskAction = async (userCustomTaskData: userTaskDat
     return { status: "error", message: "unauthenticated", data: null };
   }
 
-  console.log(userCustomTaskData);
-
   const ISOFormattedDate = userCustomTaskData.date.toISOString().split("T")[0];
 
   const storedTask = await db

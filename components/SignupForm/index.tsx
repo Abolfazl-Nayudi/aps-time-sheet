@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { insertUserData } from "@/utils/commenQueries/insertUserData";
 import { SignupFormSchema, SignupFormValues } from "@/utils/zod/SignupFormSchema";
 
-const SignupForm: React.FC = () => {
+const SignupForm: React.FC<{ type: "ADMIN" | "USER" }> = ({ type }) => {
   const router = useRouter();
 
   const {
@@ -32,10 +32,12 @@ const SignupForm: React.FC = () => {
       const response = await insertUserData(data);
       if (response.status === 201) {
         setSuccessMessage(response.message);
-        setTimeout(() => {
-          reset();
-          router.push("/login");
-        }, 1000);
+        if (type === "USER") {
+          setTimeout(() => {
+            reset();
+            router.push("/login");
+          }, 1000);
+        }
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -106,12 +108,14 @@ const SignupForm: React.FC = () => {
       >
         {isSubmitting ? "Signing up..." : "Signup"}
       </Button>
-      <Typography variant="body2" textAlign="center">
-        Already have an account?{" "}
-        <Link href="/login" style={{ textDecoration: "none", color: "#1976d2" }}>
-          Log in
-        </Link>
-      </Typography>
+      {type === "USER" && (
+        <Typography variant="body2" textAlign="center">
+          Already have an account?{" "}
+          <Link href="/login" style={{ textDecoration: "none", color: "#1976d2" }}>
+            Log in
+          </Link>
+        </Typography>
+      )}
       {errorMessage && (
         <Typography variant="body1" textAlign="center" color="crimson">
           {errorMessage}

@@ -113,8 +113,6 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
       setOpen(false);
       setOpenSnackBar(true);
     }
-
-    console.log(data);
   };
 
   useEffect(() => {

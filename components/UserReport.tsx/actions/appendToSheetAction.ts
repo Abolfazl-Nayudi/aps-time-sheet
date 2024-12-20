@@ -14,9 +14,6 @@ type ArgType = {
 };
 
 const appendToSheetAction = async ({ data, page, row }: ArgType) => {
-  console.log("page", page);
-  console.log("row", row);
-
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -48,8 +45,6 @@ const appendToSheetAction = async ({ data, page, row }: ArgType) => {
       totalPricePerHour = calculateTotalPrice(duration.data, parseFloat(hourPrice)).toFixed(3);
     }
 
-    console.log(totalPricePerHour);
-
     return [
       date || null,
       null,
@@ -68,8 +63,6 @@ const appendToSheetAction = async ({ data, page, row }: ArgType) => {
     ];
   });
 
-  console.log(rows);
-
   const response = await sheets.spreadsheets.values.update({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
     range: `${page}!${row}`,
@@ -79,7 +72,6 @@ const appendToSheetAction = async ({ data, page, row }: ArgType) => {
     },
   });
 
-  console.log(response);
   if (response.status !== 200) {
     return { status: "error", message: "Failed to insert data into the sheet", data: null };
   }

@@ -4,7 +4,7 @@ import React from "react";
 import UserReport from "@/components/UserReport.tsx";
 import { auth } from "@/utils/authOptions";
 
-export default async function SingleUserPage() {
+export default async function SingleUserPage({ params }: { params: { id: string } }) {
   const session = await auth();
   const user = session.getUser();
   if (!user || user?.role !== "ADMIN") {
@@ -13,7 +13,7 @@ export default async function SingleUserPage() {
 
   return (
     <>
-      <UserReport userId={user.userId} />
+      <UserReport userId={params.id} />
     </>
   );
 }
