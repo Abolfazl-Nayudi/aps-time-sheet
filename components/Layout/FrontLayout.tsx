@@ -9,7 +9,6 @@ import UserLayout from "./UserLayout";
 
 export default function FrontLayout({ children }: { children: React.ReactNode }) {
   const session = useSession();
-  console.log(session);
 
   if (usePathname()?.includes("/admin") && session.data?.user?.role === "ADMIN") {
     return (

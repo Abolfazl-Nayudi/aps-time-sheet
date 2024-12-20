@@ -7,12 +7,13 @@ import { compareAsc, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { appendToSheetAction } from "@/utils/appendToSheetAction";
 import { calculateSalary } from "@/utils/calclulateSalary";
 
+import SnackBarComponent from "../SnackBar";
 import { getUserCustomTasksAction } from "./actions/getUserCustomTaskAction";
 import { getUserTasksAction } from "./actions/getUserTasksAction";
 import UserInformation from "./actions/UserInformation";
+import ExportToSheetModal from "./ExportToSheetModal";
 import UserCustomTasksTable from "./UserCustomTasksTable";
 import UserTasksTable from "./UserTasksTable";
 
@@ -55,11 +56,14 @@ const UserReport = ({ userId }: { userId: string }) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
   const router = useRouter();
-
+  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [userTasks, setUserTasks] = useState<UserTaskDataType[] | []>([]);
   const [userCustomTasks, setUserCustomTasks] = useState<CustomTaskDataType[] | []>([]);
   const [user, setUser] = useState<UserData | null>(null);
   const [salary, setSalary] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [openExportModal, setOpenExportModal] = useState(false);
+
   const [filterDate, setFilterDate] = useState({
     startDate: today,
     endDate: tomorrow,
@@ -68,7 +72,6 @@ const UserReport = ({ userId }: { userId: string }) => {
     active: false,
     tasks: [],
   });
-  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -134,13 +137,13 @@ const UserReport = ({ userId }: { userId: string }) => {
     })();
   }, []);
 
-  const handleExportClick = async () => {
-    try {
-      const res = await appendToSheetAction(userTasks);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleExportClick = async () => {
+  //   try {
+  //     const res = await appendToSheetAction(userTasks);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleFilterDate = () => {
     const { startDate, endDate } = filterDate;
@@ -196,9 +199,15 @@ const UserReport = ({ userId }: { userId: string }) => {
             )}
           </Stack>
           <Stack direction={"row"} justifyContent={"center"} marginTop={"2rem"}>
-            <Button onClick={handleExportClick} variant="contained">
+            <Button onClick={() => setOpenExportModal(true)} variant="contained">
               Export
             </Button>
+            {/* export modal */}
+            <ExportToSheetModal
+              open={openExportModal}
+              setOpen={setOpenExportModal}
+              tasksData={filteredTaskData.active ? filteredTaskData.tasks : userTasks}
+            />
           </Stack>
         </Box>
 
@@ -225,6 +234,7 @@ const UserReport = ({ userId }: { userId: string }) => {
             </Typography>
           )}
         </Box>
+        <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`Tasks inserted Successfully`} />
       </Box>
     </>
   );

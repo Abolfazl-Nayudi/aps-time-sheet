@@ -4,10 +4,19 @@ import { google } from "googleapis";
 
 import { UserTaskDataType } from "@/components/UserReport.tsx";
 
-import { calculateTotalPrice } from "./calclulateSalary";
-import { timeGapCalculator } from "./calculateTimeGap";
+import { calculateTotalPrice } from "../../../utils/calclulateSalary";
+import { timeGapCalculator } from "../../../utils/calculateTimeGap";
 
-const appendToSheetAction = async (data: UserTaskDataType[]) => {
+type ArgType = {
+  page: string;
+  row: string;
+  data: UserTaskDataType[];
+};
+
+const appendToSheetAction = async ({ data, page, row }: ArgType) => {
+  console.log("page", page);
+  console.log("row", row);
+
   const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -63,16 +72,18 @@ const appendToSheetAction = async (data: UserTaskDataType[]) => {
 
   const response = await sheets.spreadsheets.values.update({
     spreadsheetId: process.env.GOOGLE_SHEET_ID,
-    range: "B9",
+    range: `${page}!${row}`,
     valueInputOption: "USER_ENTERED",
     requestBody: {
       values: rows,
     },
   });
 
-  // console.log(response);
-
-  return { status: "success", message: "", data: "" };
+  console.log(response);
+  if (response.status !== 200) {
+    return { status: "error", message: "Failed to insert data into the sheet", data: null };
+  }
+  return { status: "success", message: "data inserted successfully", data: "" };
 };
 
 export { appendToSheetAction };

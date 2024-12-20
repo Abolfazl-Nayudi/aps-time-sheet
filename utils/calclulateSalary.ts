@@ -34,7 +34,6 @@ const calculateSalary = (tasks: UserTaskDataType[]) => {
   const formatPrice = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(
     price,
   );
-  console.log(formatPrice);
   return formatPrice;
 };
 
