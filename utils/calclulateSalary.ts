@@ -1,4 +1,5 @@
 import { UserTaskDataType } from "@/components/UserReport.tsx";
+
 import { timeGapCalculator } from "./calculateTimeGap";
 
 function calculateTotalPrice(duration: string, pricePerHour: number) {
@@ -37,4 +38,4 @@ const calculateSalary = (tasks: UserTaskDataType[]) => {
   return formatPrice;
 };
 
-export { calculateSalary };
+export { calculateSalary, calculateTotalPrice };

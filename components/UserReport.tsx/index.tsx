@@ -1,10 +1,11 @@
 "use client";
 
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { compareAsc, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { appendToSheetAction } from "@/utils/appendToSheetAction";
 import { calculateSalary } from "@/utils/calclulateSalary";
 
 import { getUserCustomTasksAction } from "./actions/getUserCustomTaskAction";
@@ -118,6 +119,14 @@ const UserReport = ({ userId }: { userId: string }) => {
     })();
   }, []);
 
+  const handleExportClick = async () => {
+    try {
+      const res = await appendToSheetAction(userTasks);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Box component={"section"} marginY={10}>
@@ -136,7 +145,11 @@ const UserReport = ({ userId }: { userId: string }) => {
             </Typography>
           )}
         </Box>
-
+        <Box display={"flex"} justifyContent={"center"} marginTop={5}>
+          <Button onClick={handleExportClick} variant="contained">
+            Export
+          </Button>
+        </Box>
         <Box marginTop={"4rem"}>
           <Typography variant="h4" textAlign={"center"} marginBottom={"1rem"}>
             Tasks
