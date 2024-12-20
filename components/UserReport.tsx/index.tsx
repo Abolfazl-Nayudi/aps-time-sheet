@@ -1,6 +1,8 @@
 "use client";
 
 import { Box, Button, Stack, Typography } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { compareAsc, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,6 +12,7 @@ import { calculateSalary } from "@/utils/calclulateSalary";
 
 import { getUserCustomTasksAction } from "./actions/getUserCustomTaskAction";
 import { getUserTasksAction } from "./actions/getUserTasksAction";
+import UserInformation from "./actions/UserInformation";
 import UserCustomTasksTable from "./UserCustomTasksTable";
 import UserTasksTable from "./UserTasksTable";
 
@@ -40,7 +43,7 @@ export type CustomTaskDataType = {
   date: string;
 };
 
-type UserData = {
+export type UserData = {
   id: string;
   firstName: string;
   lastName: string;
@@ -48,13 +51,25 @@ type UserData = {
 };
 
 const UserReport = ({ userId }: { userId: string }) => {
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
   const router = useRouter();
 
   const [userTasks, setUserTasks] = useState<UserTaskDataType[] | []>([]);
   const [userCustomTasks, setUserCustomTasks] = useState<CustomTaskDataType[] | []>([]);
   const [user, setUser] = useState<UserData | null>(null);
   const [salary, setSalary] = useState("");
+  const [filterDate, setFilterDate] = useState({
+    startDate: today,
+    endDate: tomorrow,
+  });
+  const [filteredTaskData, setFilteredTaskData] = useState<{ active: boolean; tasks: UserTaskDataType[] | [] }>({
+    active: false,
+    tasks: [],
+  });
   const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     (async () => {
       // user tasks
@@ -127,34 +142,72 @@ const UserReport = ({ userId }: { userId: string }) => {
     }
   };
 
+  const handleFilterDate = () => {
+    const { startDate, endDate } = filterDate;
+    if (startDate && endDate) {
+      const tasks = userTasks.filter(task => {
+        const taskDate = parseISO(task.date);
+        return taskDate >= startDate && taskDate <= endDate;
+      });
+
+      setFilteredTaskData({ active: true, tasks });
+    }
+  };
+
   return (
     <>
       <Box component={"section"} marginY={10}>
-        <Box>
-          {user && (
-            <Stack direction={"row"} gap={5} justifyContent={"center"}>
-              <Typography variant="h6">Email: {user?.email}</Typography>
-              <Typography variant="h6">
-                Full Name: {user?.firstName} {user?.lastName}
+        {user && <UserInformation {...user} />}
+        <Box padding={"1rem"} border={"1px solid lightgray"} borderRadius={"5px"} width={900} margin={"2rem auto 0"}>
+          <Stack direction={"row"} justifyContent={"space-evenly"} alignItems={"center"}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Start Date"
+                value={filterDate.startDate}
+                onChange={newValue => {
+                  if (newValue) {
+                    setFilterDate(data => ({ ...data, startDate: newValue }));
+                  }
+                }}
+              />
+              <DatePicker
+                label="End Date"
+                value={filterDate.endDate}
+                onChange={newValue => {
+                  if (newValue) {
+                    setFilterDate(data => ({ ...data, endDate: newValue }));
+                  }
+                }}
+              />
+            </LocalizationProvider>
+            <Button variant="contained" sx={{ textTransform: "none", fontSize: 20 }} onClick={handleFilterDate}>
+              Filter
+            </Button>
+          </Stack>
+
+          <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} marginTop={"2rem"}>
+            <Typography variant="h5">Number Of Tasks: {userTasks.length}</Typography>
+            <Typography variant="h5">Number Of Custom Tasks: {userCustomTasks.length}</Typography>
+
+            {salary && (
+              <Typography variant="h5" textAlign={"center"} color={"green"}>
+                Salary: {salary}
               </Typography>
-            </Stack>
-          )}
-          {salary && (
-            <Typography variant="h5" textAlign={"center"} marginTop={5}>
-              Salary: {salary}{" "}
-            </Typography>
-          )}
+            )}
+          </Stack>
+          <Stack direction={"row"} justifyContent={"center"} marginTop={"2rem"}>
+            <Button onClick={handleExportClick} variant="contained">
+              Export
+            </Button>
+          </Stack>
         </Box>
-        <Box display={"flex"} justifyContent={"center"} marginTop={5}>
-          <Button onClick={handleExportClick} variant="contained">
-            Export
-          </Button>
-        </Box>
+
+        <Box display={"flex"} justifyContent={"center"} marginTop={5}></Box>
         <Box marginTop={"4rem"}>
           <Typography variant="h4" textAlign={"center"} marginBottom={"1rem"}>
             Tasks
           </Typography>
-          <UserTasksTable userTasks={userTasks} />
+          <UserTasksTable userTasks={filteredTaskData.active ? filteredTaskData.tasks : userTasks} />
           {errorMessage && (
             <Typography variant="body2" color={"crimson"}>
               {errorMessage}

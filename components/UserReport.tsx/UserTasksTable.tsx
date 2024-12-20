@@ -28,7 +28,7 @@ export default function UserTasksTable({ userTasks }: PropsType) {
 
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
-      <Box width={1000}>
+      <Box width={1200}>
         {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}
