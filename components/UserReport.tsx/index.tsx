@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 
 import { calculateSalary } from "@/utils/calclulateSalary";
 
-import SnackBarComponent from "../SnackBar";
 import { getUserCustomTasksAction } from "./actions/getUserCustomTaskAction";
 import { getUserTasksAction } from "./actions/getUserTasksAction";
 import UserInformation from "./actions/UserInformation";
@@ -234,7 +233,6 @@ const UserReport = ({ userId }: { userId: string }) => {
             </Typography>
           )}
         </Box>
-        <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`Tasks inserted Successfully`} />
       </Box>
     </>
   );
