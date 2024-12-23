@@ -13,9 +13,8 @@ import { useState } from "react";
 
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
-import SnackBarComponent from "../SnackBar";
 import { UserTaskDataType } from ".";
-import { deleteUserTaskAction } from "./actions/deleteUserTaskAction";
+import DeleteTaskModal from "./DeleteTaskModal";
 
 // type StateType = {
 //   name: string;
@@ -35,6 +34,7 @@ type PropsType = {
 export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
   const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [deleteTaskModalState, setDeleteTaskModalState] = useState({ open: false, taskId: "" });
   // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const [editModalData, setEditModalData] = useState<StateType>({
   //   name: "",
@@ -49,20 +49,21 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
   const router = useRouter();
 
   const handleDeleteTask = async (userTaskId: string) => {
-    const { data, message, status } = await deleteUserTaskAction(userTaskId);
-    if (status === "error" && message === "unauthenticated") {
-      router.push("/");
-      return;
-    }
-    if (status === "error") {
-      setErrorMessage(message);
-      return;
-    }
-    if (data) {
-      const filteredTasks = userTasks.filter(task => task.userTaskId !== data.id);
-      setUserTasks(filteredTasks);
-      setOpenSnackBar(true);
-    }
+    setDeleteTaskModalState({ open: true, taskId: userTaskId });
+    // const { data, message, status } = await deleteUserTaskAction(userTaskId);
+    // if (status === "error" && message === "unauthenticated") {
+    //   router.push("/");
+    //   return;
+    // }
+    // if (status === "error") {
+    //   setErrorMessage(message);
+    //   return;
+    // }
+    // if (data) {
+    //   const filteredTasks = userTasks.filter(task => task.userTaskId !== data.id);
+    //   setUserTasks(filteredTasks);
+    //   setOpenSnackBar(true);
+    // }
   };
 
   return (
@@ -159,13 +160,18 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
           </Table>
         </TableContainer>
       </Box>
+      <DeleteTaskModal
+        deleteTaskModalState={deleteTaskModalState}
+        setDeleteTaskModalState={setDeleteTaskModalState}
+        userTasks={userTasks}
+        setUserTasks={setUserTasks}
+      />
       {/* <EditTaskModal
         open={editTaskModalOpen}
         setOpen={setEditTaskModalOpen}
         taskData={editModalData}
         setUserTasks={setUserTasks}
       /> */}
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task deleted successfully`} />
     </Box>
   );
 }
