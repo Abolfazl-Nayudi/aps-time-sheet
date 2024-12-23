@@ -3,7 +3,7 @@ import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@m
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { ExportModalFormSchema, ExportModalFormValues } from "@/utils/zod/ExportModalFormSchema";
@@ -11,7 +11,6 @@ import { ExportModalFormSchema, ExportModalFormValues } from "@/utils/zod/Export
 import SnackBarComponent from "../SnackBar";
 import { UserTaskDataType } from ".";
 import { appendToSheetAction } from "./actions/appendToSheetAction";
-import { getSheetNames } from "./actions/getSheetNamesAction";
 const style = {
   position: "absolute",
   top: "50%",
@@ -47,19 +46,19 @@ export default function ExportToSheetModal({ open, setOpen, tasksData }: PropsTy
     },
   });
 
-  useEffect(() => {
-    (async () => {
-      const { data, message, status } = await getSheetNames();
+  // useEffect(() => {
+  //   (async () => {
+  //     const { data, message, status } = await getSheetNames();
 
-      if (status === "error") {
-        setErrorMessage(errors => ({ ...errors, sheetNames: message }));
-        return;
-      }
-      if (data) {
-        setSheetNames(data);
-      }
-    })();
-  }, []);
+  //     if (status === "error") {
+  //       setErrorMessage(errors => ({ ...errors, sheetNames: message }));
+  //       return;
+  //     }
+  //     if (data) {
+  //       setSheetNames(data);
+  //     }
+  //   })();
+  // }, []);
 
   const onSubmit = async ({ page, row }: ExportModalFormValues) => {
     setErrorMessage({ sheetNames: "", general: "" });

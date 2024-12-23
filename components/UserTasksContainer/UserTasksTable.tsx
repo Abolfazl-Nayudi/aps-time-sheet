@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -118,7 +118,16 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
                     {startTime && endTime ? timeGapCalculator(startTime, endTime).data : "_"}
                   </TableCell>
                   <TableCell component={"td"} align="center">
-                    {notes}
+                    {/* {notes} */}
+                    {!notes ? (
+                      "_"
+                    ) : notes.length >= 10 ? (
+                      <Tooltip title={notes} placement="top" arrow>
+                        <Typography>{`${notes.slice(0, 10)}...`}</Typography>
+                      </Tooltip>
+                    ) : (
+                      notes
+                    )}
                   </TableCell>
                   <TableCell align="center">
                     <Button
