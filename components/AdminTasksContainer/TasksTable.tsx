@@ -31,9 +31,10 @@ type StateType = {
 type PropsType = {
   tasks: TaskDataType[];
   setTasks: React.Dispatch<React.SetStateAction<[] | TaskDataType[]>>;
+  categoryData: { name: string; id: string }[] | [];
 };
 
-export default function TasksTable({ tasks, setTasks }: PropsType) {
+export default function TasksTable({ tasks, setTasks, categoryData }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
@@ -149,6 +150,7 @@ export default function TasksTable({ tasks, setTasks }: PropsType) {
         setOpen={setEditTaskModalOpen}
         taskData={editModalData}
         setTasks={setTasks}
+        categoryData={categoryData}
       />
       <SnackBarComponent
         open={snackBarState.open}

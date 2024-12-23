@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -14,7 +14,6 @@ import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
 import SnackBarComponent from "../SnackBar";
 import { TaskDataType } from ".";
 import { createNewTask } from "./actions/createNewTask";
-import { getCategoryData } from "./actions/getCategoryData";
 const style = {
   position: "absolute",
   top: "50%",
@@ -31,14 +30,13 @@ type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTasks: React.Dispatch<React.SetStateAction<[] | TaskDataType[]>>;
+  categoryData: { name: string; id: string }[] | [];
 };
 
 export type AdminAddTaskFormSchemaType = z.infer<typeof AdminAddTaskFormSchema>;
 
-export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
+export default function AddTaskModal({ open, setOpen, setTasks, categoryData }: PropsType) {
   const [checked, setChecked] = useState(false);
-  const [categoryError, setCategoryError] = useState("");
-  const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
@@ -93,20 +91,6 @@ export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
     }
     setIsLoading(false);
   };
-
-  useEffect(() => {
-    (async () => {
-      const { data, message, status } = await getCategoryData();
-      if (status === "error") {
-        setCategoryError(message);
-        return;
-      }
-
-      if (data) {
-        setCategoryData(data);
-      }
-    })();
-  }, []);
 
   return (
     <div>
@@ -183,11 +167,6 @@ export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
               {errors.categoryId && (
                 <Typography color={"crimson"} variant="body2">
                   {errors.categoryId.message}
-                </Typography>
-              )}
-              {categoryError && (
-                <Typography color={"crimson"} variant="body2">
-                  {categoryError}
                 </Typography>
               )}
             </Box>

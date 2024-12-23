@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import { snackBarStateType } from "@/types/snackBarStateType";
 
@@ -28,9 +28,18 @@ const style = {
 type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setCategoryData: Dispatch<
+    SetStateAction<
+      | {
+          name: string;
+          id: string;
+        }[]
+      | []
+    >
+  >;
 };
 
-export default function AddCategoryModal({ open, setOpen }: PropsType) {
+export default function AddCategoryModal({ open, setOpen, setCategoryData }: PropsType) {
   const [categoryName, setCategoryName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
@@ -44,7 +53,7 @@ export default function AddCategoryModal({ open, setOpen }: PropsType) {
     setCategoryName("");
 
     if (categoryName.length > 1) {
-      const { message, status } = await createNewCategory(categoryName);
+      const { message, status, data } = await createNewCategory(categoryName);
 
       if (status === "error" && message === "unauthenticated") {
         router.push("/");
@@ -52,9 +61,11 @@ export default function AddCategoryModal({ open, setOpen }: PropsType) {
       }
 
       if (status === "error") return setSnackBarState({ open: true, text: message, status: "error" });
-
-      setOpen(false);
-      setSnackBarState({ open: true, text: message, status: "success" });
+      if (data) {
+        setCategoryData(categories => [...categories, data]);
+        setOpen(false);
+        setSnackBarState({ open: true, text: message, status: "success" });
+      }
     } else {
       setErrorMessage("the category name should be more than 1 character");
     }

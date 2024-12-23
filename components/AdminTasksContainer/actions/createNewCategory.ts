@@ -12,11 +12,10 @@ export const createNewCategory = async (name: string) => {
     return { status: "error", message: "unauthenticated", data: null };
   }
 
-  const newCategory = await db.insert(categoryTable).values({ name });
-
-  if (!newCategory.rowCount) {
+  const newCategory = await db.insert(categoryTable).values({ name }).returning();
+  if (!newCategory[0]) {
     return { status: "error", message: "there is an error, try again", data: null };
   }
 
-  return { status: "success", message: "category created successfully", data: null };
+  return { status: "success", message: "category created successfully", data: newCategory[0] };
 };

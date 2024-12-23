@@ -14,7 +14,6 @@ import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
 import SnackBarComponent from "../SnackBar";
 import { TaskDataType } from ".";
 import { editTaskAction } from "./actions/editTaskAction";
-import { getCategoryData } from "./actions/getCategoryData";
 
 const style = {
   position: "absolute",
@@ -41,12 +40,11 @@ export type PropsType = {
     categoryName: string;
   };
   setTasks: React.Dispatch<React.SetStateAction<[] | TaskDataType[]>>;
+  categoryData: { name: string; id: string }[] | [];
 };
 
-export default function EditTaskModal({ open, setOpen, taskData, setTasks }: PropsType) {
+export default function EditTaskModal({ open, setOpen, taskData, setTasks, categoryData }: PropsType) {
   const [checked, setChecked] = useState(false);
-  const [categoryError, setCategoryError] = useState("");
-  const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
@@ -116,20 +114,6 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
       setSnackBarState({ open: true, status: "success", text: message });
     }
   };
-
-  useEffect(() => {
-    (async () => {
-      const { data, message, status } = await getCategoryData();
-      if (status === "error") {
-        setCategoryError(message);
-        return;
-      }
-
-      if (data) {
-        setCategoryData(data);
-      }
-    })();
-  }, []);
 
   useEffect(() => {
     reset(taskData); // Reset the form with new data
@@ -219,11 +203,6 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
               {errors.categoryId && (
                 <Typography color={"crimson"} variant="body2">
                   {errors.categoryId.message}
-                </Typography>
-              )}
-              {categoryError && (
-                <Typography color={"crimson"} variant="body2">
-                  {categoryError}
                 </Typography>
               )}
             </Box>
