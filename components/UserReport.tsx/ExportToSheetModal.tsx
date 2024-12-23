@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
 import { ExportModalFormSchema, ExportModalFormValues } from "@/utils/zod/ExportModalFormSchema";
 
 import SnackBarComponent from "../SnackBar";
@@ -30,7 +31,7 @@ type PropsTypes = {
 };
 
 export default function ExportToSheetModal({ open, setOpen, tasksData }: PropsTypes) {
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const [sheetNames, setSheetNames] = useState<string[] | []>([]);
   const [errorMessage, setErrorMessage] = useState({ sheetNames: "", general: "" });
@@ -65,15 +66,18 @@ export default function ExportToSheetModal({ open, setOpen, tasksData }: PropsTy
     try {
       const { message, status, data } = await appendToSheetAction({ page, row, data: tasksData });
       if (status === "error") {
-        setErrorMessage(errors => ({ ...errors, general: message }));
+        // setErrorMessage(errors => ({ ...errors, general: message }));
+        setSnackBarState({ open: true, status: "error", text: message });
+
         return;
       }
       if (status === "success") {
-        setOpenSnackBar(true);
+        setSnackBarState({ open: true, status: "success", text: message });
       }
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setErrorMessage(errors => ({ ...errors, general: error.message }));
+        setSnackBarState({ open: true, status: "error", text: error.message });
+        // setErrorMessage(errors => ({ ...errors, general: error.message }));
       }
     }
   };
@@ -137,7 +141,12 @@ export default function ExportToSheetModal({ open, setOpen, tasksData }: PropsTy
           )}
         </Box>
       </Modal>
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`Tasks inserted Successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </div>
   );
 }

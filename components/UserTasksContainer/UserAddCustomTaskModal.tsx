@@ -9,6 +9,7 @@ import { add, compareAsc, format, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
 import { getCategoryData } from "../AdminTasksContainer/actions/getCategoryData";
@@ -65,7 +66,7 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
   const [formData, setFormData] = useState(formDataInitialValue);
   const [duration, setDuration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const handleSelectCategory = (event: SelectChangeEvent) => {
     setFormData(data => ({ ...data, selectedCategory: event.target.value as string }));
@@ -121,7 +122,9 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
       return;
     }
     if (status === "error") {
-      setErrorMessage(errors => ({ ...errors, general: message }));
+      // setErrorMessage(errors => ({ ...errors, general: message }));
+      setSnackBarState({ open: true, text: message, status: "error" });
+
       setIsLoading(false);
       return;
     }
@@ -156,7 +159,7 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
 
         return sortedData;
       });
-      setOpenSnackBar(true);
+      setSnackBarState({ open: true, text: message, status: "success" });
       setOpen(false);
     }
   };
@@ -297,7 +300,12 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
           </form>
         </Box>
       </Modal>
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`Task Added Successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </div>
   );
 }

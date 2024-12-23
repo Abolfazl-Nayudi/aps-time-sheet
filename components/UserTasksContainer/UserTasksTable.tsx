@@ -33,7 +33,6 @@ type PropsType = {
 
 export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [deleteTaskModalState, setDeleteTaskModalState] = useState({ open: false, taskId: "" });
   // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const [editModalData, setEditModalData] = useState<StateType>({

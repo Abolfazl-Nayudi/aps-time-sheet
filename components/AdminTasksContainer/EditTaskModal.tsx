@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
 import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
 
 import SnackBarComponent from "../SnackBar";
@@ -47,7 +48,7 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
   const [categoryError, setCategoryError] = useState("");
   const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const router = useRouter();
 
@@ -86,7 +87,8 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
       return;
     }
     if (status === "error") {
-      setErrorMessage(message);
+      setSnackBarState({ open: true, status: "error", text: message });
+
       return;
     }
 
@@ -111,7 +113,7 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
 
       reset();
       setOpen(false);
-      setOpenSnackBar(true);
+      setSnackBarState({ open: true, status: "success", text: message });
     }
   };
 
@@ -238,7 +240,12 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks }: Pro
           )}
         </Box>
       </Modal>
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task edited successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </div>
   );
 }

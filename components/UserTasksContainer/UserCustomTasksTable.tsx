@@ -13,7 +13,6 @@ import { useState } from "react";
 
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
-import SnackBarComponent from "../SnackBar";
 import { CustomTaskDataType } from ".";
 
 // type StateType = {
@@ -33,7 +32,6 @@ type PropsType = {
 
 export default function UserCustomTasksTable({ userCustomTasks, setUserCustomTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
   // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const [editModalData, setEditModalData] = useState<StateType>({
   //   name: "",
@@ -155,7 +153,6 @@ export default function UserCustomTasksTable({ userCustomTasks, setUserCustomTas
         taskData={editModalData}
         setUserCustomTasks={setUserCustomTasks}
       /> */}
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task deleted successfully`} />
     </Box>
   );
 }

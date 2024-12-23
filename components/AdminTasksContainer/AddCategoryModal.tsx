@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
+
 import SnackBarComponent from "../SnackBar";
 import { createNewCategory } from "./actions/createNewCategory";
 
@@ -31,7 +33,7 @@ type PropsType = {
 export default function AddCategoryModal({ open, setOpen }: PropsType) {
   const [categoryName, setCategoryName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const router = useRouter();
 
@@ -49,10 +51,10 @@ export default function AddCategoryModal({ open, setOpen }: PropsType) {
         return;
       }
 
-      if (status === "error") return setErrorMessage(message);
+      if (status === "error") return setSnackBarState({ open: true, text: message, status: "error" });
 
       setOpen(false);
-      setOpenSnackBar(true);
+      setSnackBarState({ open: true, text: message, status: "success" });
     } else {
       setErrorMessage("the category name should be more than 1 character");
     }
@@ -87,7 +89,12 @@ export default function AddCategoryModal({ open, setOpen }: PropsType) {
           )}
         </Box>
       </Modal>
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`category created successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </div>
   );
 }

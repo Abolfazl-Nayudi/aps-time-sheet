@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
 import { AdminAddTaskFormSchema } from "@/utils/zod/AdminAddTaskFormSchema";
 
 import SnackBarComponent from "../SnackBar";
@@ -39,7 +40,8 @@ export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
   const [categoryError, setCategoryError] = useState("");
   const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
+
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
@@ -76,17 +78,17 @@ export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
     });
 
     if (status === "error") {
-      setErrorMessage(message);
+      setSnackBarState({ open: true, status: "error", text: message });
       return;
     }
 
-    if (status !== "sucess") {
+    if (status === "success") {
       if (createdTask) {
         const { name, id, ...restOfData } = createdTask;
         setTasks(tasks => [...tasks, { ...restOfData, taskName: name, taskId: id }]);
         reset();
         setOpen(false);
-        setOpenSnackBar(true);
+        setSnackBarState({ open: true, status: "success", text: message });
       }
     }
     setIsLoading(false);
@@ -208,7 +210,12 @@ export default function AddTaskModal({ open, setOpen, setTasks }: PropsType) {
           )}
         </Box>
       </Modal>
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task created successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </div>
   );
 }

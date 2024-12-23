@@ -55,7 +55,6 @@ const UserReport = ({ userId }: { userId: string }) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
   const router = useRouter();
-  const [openSnackBar, setOpenSnackBar] = useState(false);
   const [userTasks, setUserTasks] = useState<UserTaskDataType[] | []>([]);
   const [userCustomTasks, setUserCustomTasks] = useState<CustomTaskDataType[] | []>([]);
   const [user, setUser] = useState<UserData | null>(null);

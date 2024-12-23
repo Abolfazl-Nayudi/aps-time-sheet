@@ -31,5 +31,5 @@ export const createUserTaskAction = async (userTaskData: userTaskDataType) => {
     return { status: "error", message: "failed to store task data, try again", data: null };
   }
 
-  return { status: "success", message: "task stored successfully", data: storedTask[0] };
+  return { status: "success", message: "Task Created Successfully", data: storedTask[0] };
 };

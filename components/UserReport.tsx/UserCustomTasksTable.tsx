@@ -10,6 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useState } from "react";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
 import SnackBarComponent from "../SnackBar";
@@ -21,7 +22,7 @@ type PropsType = {
 
 export default function UserCustomTasksTable({ userCustomTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
@@ -84,7 +85,12 @@ export default function UserCustomTasksTable({ userCustomTasks }: PropsType) {
         </TableContainer>
       </Box>
 
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task deleted successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </Box>
   );
 }

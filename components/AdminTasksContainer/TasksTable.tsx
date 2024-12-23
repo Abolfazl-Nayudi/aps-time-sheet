@@ -11,6 +11,8 @@ import TableRow from "@mui/material/TableRow";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { snackBarStateType } from "@/types/snackBarStateType";
+
 import SnackBarComponent from "../SnackBar";
 import { TaskDataType } from ".";
 import { deleteTaskAction } from "./actions/deleteTaskAction";
@@ -33,7 +35,7 @@ type PropsType = {
 
 export default function TasksTable({ tasks, setTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   const [editModalData, setEditModalData] = useState<StateType>({
     name: "",
@@ -56,14 +58,14 @@ export default function TasksTable({ tasks, setTasks }: PropsType) {
     }
 
     if (status === "error") {
-      setErrorMessage(message);
+      setSnackBarState({ open: true, status: "error", text: message });
       return;
     }
 
     if (data) {
       const filteredTasks = tasks.filter(task => task.taskId !== data.id);
       setTasks(filteredTasks);
-      setOpenSnackBar(true);
+      setSnackBarState({ open: true, status: "success", text: message });
     }
   };
 
@@ -148,7 +150,12 @@ export default function TasksTable({ tasks, setTasks }: PropsType) {
         taskData={editModalData}
         setTasks={setTasks}
       />
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task deleted successfully`} />
+      <SnackBarComponent
+        open={snackBarState.open}
+        setOpen={setSnackBarState}
+        text={snackBarState.text}
+        status={snackBarState.status}
+      />
     </Box>
   );
 }

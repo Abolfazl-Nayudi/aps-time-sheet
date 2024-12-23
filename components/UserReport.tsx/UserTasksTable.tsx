@@ -13,7 +13,6 @@ import { useState } from "react";
 
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
-import SnackBarComponent from "../SnackBar";
 import { UserTaskDataType } from ".";
 
 type PropsType = {
@@ -22,7 +21,6 @@ type PropsType = {
 
 export default function UserTasksTable({ userTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
 
   const router = useRouter();
 
@@ -119,7 +117,6 @@ export default function UserTasksTable({ userTasks }: PropsType) {
         taskData={editModalData}
         setUserTasks={setUserTasks}
       /> */}
-      <SnackBarComponent open={openSnackBar} setOpen={setOpenSnackBar} text={`task deleted successfully`} />
     </Box>
   );
 }
