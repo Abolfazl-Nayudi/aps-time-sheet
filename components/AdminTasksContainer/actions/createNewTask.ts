@@ -35,6 +35,6 @@ export const createNewTask = async (data: ArgType) => {
   return {
     status: "success",
     message: "task created successfully",
-    data: { ...newTask[0], categoryName: taskCategory[0].categoryName },
+    data: { ...newTask[0], categoryName: taskCategory[0].categoryName, count: 0 },
   };
 };

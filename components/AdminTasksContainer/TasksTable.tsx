@@ -15,7 +15,7 @@ import { snackBarStateType } from "@/types/snackBarStateType";
 
 import SnackBarComponent from "../SnackBar";
 import { TaskDataType } from ".";
-import { deleteTaskAction } from "./actions/deleteTaskAction";
+import DeleteTaskModal from "./DeleteTaskModal";
 import EditTaskModal from "./EditTaskModal";
 
 type StateType = {
@@ -37,6 +37,7 @@ type PropsType = {
 export default function TasksTable({ tasks, setTasks, categoryData }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
+  const [deleteTaskModalState, setDeleteTaskModalState] = useState({ open: false, taskId: "" });
   const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   const [editModalData, setEditModalData] = useState<StateType>({
     name: "",
@@ -50,29 +51,9 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
 
   const router = useRouter();
 
-  const handleDeleteTask = async (taskId: string) => {
-    const { data, message, status } = await deleteTaskAction(taskId);
-
-    if (status === "error" && message === "unauthenticated") {
-      router.push("/");
-      return;
-    }
-
-    if (status === "error") {
-      setSnackBarState({ open: true, status: "error", text: message });
-      return;
-    }
-
-    if (data) {
-      const filteredTasks = tasks.filter(task => task.taskId !== data.id);
-      setTasks(filteredTasks);
-      setSnackBarState({ open: true, status: "success", text: message });
-    }
-  };
-
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"} marginTop={"4rem"}>
-      <Box width={900}>
+      <Box width={1000}>
         {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}
@@ -87,11 +68,12 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
                 <TableCell align="center">Price</TableCell>
                 <TableCell align="center">is Per Hour</TableCell>
                 <TableCell align="center">Hour Price</TableCell>
+                <TableCell align="center">Accociated User Tasks</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {tasks?.map(({ categoryName, hourPrice, taskId, isByHour, price, taskName, categoryId }) => (
+              {tasks?.map(({ categoryName, hourPrice, taskId, isByHour, price, taskName, categoryId, count }) => (
                 <TableRow
                   key={taskId}
                   sx={{
@@ -115,6 +97,7 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
                     {isByHour ? "Yes" : "No"}
                   </TableCell>
                   <TableCell align="center">{hourPrice ? hourPrice : "_"}</TableCell>
+                  <TableCell align="center">{count}</TableCell>
                   <TableCell align="center">
                     <Button
                       color="primary"
@@ -135,7 +118,12 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
                     >
                       Edit
                     </Button>
-                    <Button color="error" variant="contained" onClick={() => handleDeleteTask(taskId)}>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      disabled={!!count}
+                      onClick={() => setDeleteTaskModalState({ open: true, taskId })}
+                    >
                       Delete
                     </Button>
                   </TableCell>
@@ -151,6 +139,12 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
         taskData={editModalData}
         setTasks={setTasks}
         categoryData={categoryData}
+      />
+      <DeleteTaskModal
+        deleteTaskModalState={deleteTaskModalState}
+        setDeleteTaskModalState={setDeleteTaskModalState}
+        tasks={tasks}
+        setTasks={setTasks}
       />
       <SnackBarComponent
         open={snackBarState.open}

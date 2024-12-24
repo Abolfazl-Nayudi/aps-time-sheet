@@ -2,13 +2,14 @@
 import { Box, Button, Stack, Tab, Tabs, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { getTaskData } from "@/utils/commenQueries/getTaskData";
-
 import { getCategoryData } from "./actions/getCategoryData";
+import { getTaskData } from "./actions/getTaskData";
 import AddCategoryModal from "./AddCategoryModal";
 import AddTaskModal from "./AddTaskModal";
-import CategoryTable from "./categoriesTable";
+import CategoryTable from "./CategoriesTable";
 import TasksTable from "./TasksTable";
+
+export type CategoryStateType = { name: string; id: string; count: number }[] | [];
 
 export type TaskDataType = {
   taskId: string;
@@ -18,6 +19,7 @@ export type TaskDataType = {
   hourPrice: string | null;
   taskName: string;
   categoryName: string;
+  count: number;
 };
 
 interface TabPanelProps {
@@ -55,7 +57,7 @@ export default function AdminTaskContainer() {
   const [errorMessage, setErrorMessage] = useState({ taskError: "", categoryError: "" });
   const [taskData, setTaskData] = useState<TaskDataType[] | []>([]);
   const [value, setValue] = useState(0);
-  const [categoryData, setCategoryData] = useState<{ name: string; id: string }[] | []>([]);
+  const [categoryData, setCategoryData] = useState<CategoryStateType>([]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -122,7 +124,7 @@ export default function AdminTaskContainer() {
             ADD Category
           </Button>
         </Stack>
-        <CategoryTable categoryData={categoryData} />
+        <CategoryTable categoryData={categoryData} setCategoryData={setCategoryData} />
         {errorMessage.categoryError && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage.categoryError}

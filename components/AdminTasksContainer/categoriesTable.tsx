@@ -9,9 +9,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import { snackBarStateType } from "@/types/snackBarStateType";
+
+import { CategoryStateType } from ".";
+import DeleteCategoryModal from "./DeleteCategoryModal";
+import EditCategoryModal from "./EditCategoryModal";
 
 type StateType = {
   name: string;
@@ -24,13 +28,16 @@ type StateType = {
 };
 
 type PropsType = {
-  categoryData: { name: string; id: string }[] | [];
+  categoryData: CategoryStateType;
+  setCategoryData: Dispatch<SetStateAction<CategoryStateType>>;
 };
 
-export default function CategoryTable({ categoryData }: PropsType) {
+export default function CategoryTable({ categoryData, setCategoryData }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
-
+  const [editCategoryModalOpen, setEditCategoryModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState({ id: "", name: "" });
+  const [deleteCategoryModalState, setDeleteCategoryModalState] = useState({ open: false, categoryId: "" });
   const router = useRouter();
 
   const handleDeleteCategory = async () => {
@@ -63,11 +70,12 @@ export default function CategoryTable({ categoryData }: PropsType) {
             <TableHead>
               <TableRow>
                 <TableCell align="center">Category</TableCell>
+                <TableCell align="center">Number Of Associated Tasks</TableCell>
                 <TableCell align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {categoryData?.map(({ name, id }) => (
+              {categoryData?.map(({ name, id, count }) => (
                 <TableRow
                   key={id}
                   sx={{
@@ -81,11 +89,30 @@ export default function CategoryTable({ categoryData }: PropsType) {
                   <TableCell component="th" scope="row" align="center">
                     {name}
                   </TableCell>
+
+                  <TableCell component="th" scope="row" align="center">
+                    {count}
+                  </TableCell>
                   <TableCell align="center">
-                    <Button color="primary" variant="contained" sx={{ marginRight: 2 }}>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      sx={{ marginRight: 2 }}
+                      onClick={() => {
+                        setSelectedCategory({ id, name });
+                        setEditCategoryModalOpen(true);
+                      }}
+                    >
                       Edit
                     </Button>
-                    <Button color="error" variant="contained" onClick={() => handleDeleteCategory()}>
+                    <Button
+                      color="error"
+                      variant="contained"
+                      disabled={!!count}
+                      onClick={() => {
+                        setDeleteCategoryModalState({ open: true, categoryId: id });
+                      }}
+                    >
                       Delete
                     </Button>
                   </TableCell>
@@ -95,6 +122,18 @@ export default function CategoryTable({ categoryData }: PropsType) {
           </Table>
         </TableContainer>
       </Box>
+      <EditCategoryModal
+        open={editCategoryModalOpen}
+        setOpen={setEditCategoryModalOpen}
+        setCategoryData={setCategoryData}
+        selectedCategory={selectedCategory}
+      />
+      <DeleteCategoryModal
+        deleteCategoryModalState={deleteCategoryModalState}
+        setDeleteCategoryModalState={setDeleteCategoryModalState}
+        setCategoryData={setCategoryData}
+        categoryData={categoryData}
+      />
     </Box>
   );
 }

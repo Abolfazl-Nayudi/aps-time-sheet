@@ -14,7 +14,7 @@ import { useState } from "react";
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
 import { UserTaskDataType } from ".";
-import DeleteTaskModal from "./DeleteTaskModal";
+import DeleteTaskModal from "./UserDeleteTaskModal";
 
 // type StateType = {
 //   name: string;

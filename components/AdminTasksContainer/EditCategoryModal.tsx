@@ -1,18 +1,18 @@
 "use client";
 
-import { TextField } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import { snackBarStateType } from "@/types/snackBarStateType";
 
 import SnackBarComponent from "../SnackBar";
 import { CategoryStateType } from ".";
-import { createNewCategory } from "./actions/createNewCategory";
+import { editCategoryAction } from "./actions/editCategoryAction";
 
 const style = {
   position: "absolute",
@@ -30,23 +30,25 @@ type PropsType = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setCategoryData: Dispatch<SetStateAction<CategoryStateType>>;
+  selectedCategory: { id: string; name: string };
 };
 
-export default function AddCategoryModal({ open, setOpen, setCategoryData }: PropsType) {
+export default function EditCategoryModal({ open, setOpen, setCategoryData, selectedCategory }: PropsType) {
   const [categoryName, setCategoryName] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setLoading(true);
     setErrorMessage("");
     setCategoryName("");
 
     if (categoryName.length > 1) {
-      const { message, status, data } = await createNewCategory(categoryName);
+      const { message, status, data } = await editCategoryAction({ id: selectedCategory.id, name: categoryName });
 
       if (status === "error" && message === "unauthenticated") {
         router.push("/");
@@ -54,15 +56,22 @@ export default function AddCategoryModal({ open, setOpen, setCategoryData }: Pro
       }
 
       if (status === "error") return setSnackBarState({ open: true, text: message, status: "error" });
-      if (data) {
-        setCategoryData(categories => [...categories, data]);
+      if (status === "success" && data) {
+        setCategoryData(categories => {
+          return categories.map(category => (category.id === data.id ? { ...data, count: category.count } : category));
+        });
         setOpen(false);
         setSnackBarState({ open: true, text: message, status: "success" });
       }
     } else {
       setErrorMessage("the category name should be more than 1 character");
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    setCategoryName(selectedCategory.name);
+  }, [selectedCategory.id]);
 
   return (
     <div>
@@ -76,13 +85,13 @@ export default function AddCategoryModal({ open, setOpen, setCategoryData }: Pro
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" textAlign={"center"} variant="h6" component="h2" marginBottom={2}>
-            Add Category
+            Edit Category
           </Typography>
           <form onSubmit={handleSubmit}>
             <Box display={"flex"} flexDirection={"column"} gap={2}>
               <TextField type="text" value={categoryName} onChange={e => setCategoryName(e.target.value)} />
-              <Button color="primary" variant="contained" type="submit">
-                Add
+              <Button color="primary" variant="contained" type="submit" disabled={loading}>
+                {loading ? <CircularProgress /> : "Edit"}
               </Button>
             </Box>
           </form>

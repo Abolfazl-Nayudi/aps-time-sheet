@@ -17,5 +17,5 @@ export const createNewCategory = async (name: string) => {
     return { status: "error", message: "there is an error, try again", data: null };
   }
 
-  return { status: "success", message: "category created successfully", data: newCategory[0] };
+  return { status: "success", message: "category created successfully", data: { ...newCategory[0], count: 0 } };
 };
