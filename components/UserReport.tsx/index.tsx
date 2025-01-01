@@ -187,7 +187,9 @@ const UserReport = ({ userId }: { userId: string }) => {
           </Stack>
 
           <Stack direction={"row"} justifyContent={"space-between"} alignItems={"center"} marginTop={"2rem"}>
-            <Typography variant="h5">Number Of Tasks: {userTasks.length}</Typography>
+            <Typography variant="h5">
+              Number Of Tasks: {filteredTaskData.active ? filteredTaskData.tasks.length : userTasks.length}
+            </Typography>
             <Typography variant="h5">Number Of Custom Tasks: {userCustomTasks.length}</Typography>
 
             {salary && (
