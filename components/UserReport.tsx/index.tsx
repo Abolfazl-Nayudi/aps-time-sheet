@@ -135,6 +135,10 @@ const UserReport = ({ userId }: { userId: string }) => {
     })();
   }, []);
 
+  useEffect(() => {
+    setSalary(calculateSalary(filteredTaskData.tasks));
+  }, [filteredTaskData.tasks]);
+
   // const handleExportClick = async () => {
   //   try {
   //     const res = await appendToSheetAction(userTasks);

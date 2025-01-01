@@ -14,6 +14,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
+import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 interface Props {
@@ -33,6 +34,8 @@ const navItems = [
 // const navItems = ["Home", "About", "Contact"];
 
 export default function UserNavbarComponent(props: Props) {
+  const session = useSession();
+
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -66,7 +69,7 @@ export default function UserNavbarComponent(props: Props) {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar component="nav" sx={{ position: "static" }}>
-        <Toolbar>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -88,6 +91,16 @@ export default function UserNavbarComponent(props: Props) {
               </Button>
             ))}
           </Box>
+          {session.data?.user?.userId && (
+            <Button
+              variant="contained"
+              color="error"
+              sx={{ display: "inline-block", marginLeft: "2rem" }}
+              onClick={() => signOut({ callbackUrl: "/" })}
+            >
+              Log out
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <nav>

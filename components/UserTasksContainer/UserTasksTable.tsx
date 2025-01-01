@@ -67,14 +67,14 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
 
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
-      <Box width={1000}>
+      <Box width={1000} sx={{ overflowX: "auto" }}>
         {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}
           </Typography>
         )}
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 1000 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell align="center">Category</TableCell>
