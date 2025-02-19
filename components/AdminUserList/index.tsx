@@ -21,6 +21,7 @@ type UsersData = {
   lastName: string;
   email: string;
   id: string;
+  role: "USER" | "ADMIN";
 };
 
 export default function AdminUsersList() {
@@ -62,12 +63,12 @@ export default function AdminUsersList() {
                 <TableCell>avatar</TableCell>
                 <TableCell align="center">Full Name</TableCell>
                 <TableCell align="center">Email</TableCell>
-                {/* <TableCell align="center">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="center">Protein&nbsp;(g)</TableCell> */}
+                <TableCell align="center">is Admin</TableCell>
+                {/* <TableCell align="center">status</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
-              {usersData?.map(({ email, firstName, lastName, id }) => (
+              {usersData?.map(({ email, firstName, lastName, id, role }) => (
                 <TableRow
                   onClick={() => handleClick(id)}
                   key={id}
@@ -84,8 +85,10 @@ export default function AdminUsersList() {
                   </TableCell>
                   <TableCell align="center">{`${firstName} ${lastName}`}</TableCell>
                   <TableCell align="center">{email}</TableCell>
-                  {/* <TableCell align="center">{row.carbs}</TableCell>
-              <TableCell align="center">{row.protein}</TableCell> */}
+                  <TableCell align="center">{role}</TableCell>
+                  {/* <TableCell align="center">
+                    <Button variant="contained">Change Status</Button>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

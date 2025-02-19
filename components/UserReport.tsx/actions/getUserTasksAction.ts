@@ -37,7 +37,11 @@ export const getUserTasksAction = async (userId: string) => {
       userTaskId,
     };
   });
-  const { email, firstName, id, lastName } = userData[0];
+  const { email, firstName, id, lastName, role } = userData[0];
 
-  return { status: "success", message: "", data: { taskData: filteredData, user: { id, firstName, lastName, email } } };
+  return {
+    status: "success",
+    message: "",
+    data: { taskData: filteredData, user: { id, firstName, lastName, email, role } },
+  };
 };

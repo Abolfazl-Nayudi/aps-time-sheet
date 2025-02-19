@@ -18,8 +18,6 @@ export const editCategoryAction = async (categoryData: { id: string; name: strin
 
   const updatedCategory = await db.update(categoryTable).set({ name }).where(eq(categoryTable.id, id)).returning();
 
-  console.log(updatedCategory);
-
   if (!updatedCategory[0]) {
     return { status: "error", message: "there is an error in editing category, try again", data: null };
   }

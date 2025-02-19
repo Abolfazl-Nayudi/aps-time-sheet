@@ -12,9 +12,9 @@ export const getUsersList = async () => {
     return { status: "error", message: "unauthenticated", data: null };
   }
 
-  const { firstName, lastName, email, id } = userTable;
+  const { firstName, lastName, email, id, role } = userTable;
 
-  const usersData = await db.select({ firstName, lastName, email, id }).from(userTable);
+  const usersData = await db.select({ firstName, lastName, email, id, role }).from(userTable);
 
   if (!usersData) {
     return { status: "error", message: "there is an error, try again", data: null };

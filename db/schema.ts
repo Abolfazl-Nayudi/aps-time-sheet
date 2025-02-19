@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 import { boolean, date, numeric, pgEnum, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 
-const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
+export const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
 
 export const userTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),

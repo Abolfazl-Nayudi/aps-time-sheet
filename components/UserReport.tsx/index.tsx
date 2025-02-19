@@ -7,13 +7,14 @@ import { compareAsc, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { roleEnum } from "@/types/roleEnumType";
 import { calculateSalary } from "@/utils/calclulateSalary";
 
 import { getUserCustomTasksAction } from "./actions/getUserCustomTaskAction";
 import { getUserTasksAction } from "./actions/getUserTasksAction";
-import UserInformation from "./actions/UserInformation";
 import ExportToSheetModal from "./ExportToSheetModal";
 import UserCustomTasksTable from "./UserCustomTasksTable";
+import UserInformation from "./UserInformation";
 import UserTasksTable from "./UserTasksTable";
 
 export type UserTaskDataType = {
@@ -48,6 +49,7 @@ export type UserData = {
   firstName: string;
   lastName: string;
   email: string;
+  role: roleEnum;
 };
 
 const UserReport = ({ userId }: { userId: string }) => {
@@ -140,7 +142,7 @@ const UserReport = ({ userId }: { userId: string }) => {
   }, [filteredTaskData.tasks]);
 
   // const handleExportClick = async () => {
-  //   try {
+  //  try {
   //     const res = await appendToSheetAction(userTasks);
   //   } catch (error) {
   //     console.log(error);
