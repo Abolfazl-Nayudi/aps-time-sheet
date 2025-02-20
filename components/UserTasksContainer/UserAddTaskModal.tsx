@@ -85,23 +85,14 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
   };
 
   const handleDuration = (value: string, type: "end" | "start") => {
-    const parsed = parse(value, "HH:mm", new Date());
-    if (type === "start") {
-      if (isNaN(parsed.getTime())) {
-        setErrorMessage(errors => ({ ...errors, startTime: "Invalid Time Format" }));
-        return;
-      } else {
-        setFormData(data => ({ ...data, startTime: format(parsed, "HH:mm") }));
-      }
-    }
+    const durationType = type === "start" ? "startTime" : "endTime";
 
-    if (type === "end") {
-      if (isNaN(parsed.getTime())) {
-        setErrorMessage(errors => ({ ...errors, endTime: "Invalid Time Format" }));
-        return;
-      } else {
-        setFormData(data => ({ ...data, endTime: format(parsed, "HH:mm") }));
-      }
+    const parsed = parse(value, "HH:mm", new Date());
+    if (isNaN(parsed.getTime())) {
+      setErrorMessage(errors => ({ ...errors, [durationType]: "Invalid Time Format" }));
+      return;
+    } else {
+      setFormData(data => ({ ...data, [durationType]: format(parsed, "HH:mm") }));
     }
   };
 
