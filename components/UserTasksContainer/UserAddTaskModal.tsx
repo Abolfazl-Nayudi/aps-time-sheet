@@ -12,7 +12,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { snackBarStateType } from "@/types/snackBarStateType";
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
-import { getCategoryData } from "../AdminTasksContainer/actions/getCategoryData";
+import { getCategoriesData } from "../AdminTasksContainer/actions/getCategoriesData";
 import SnackBarComponent from "../SnackBar";
 import { UserTaskDataType } from ".";
 import { createUserTaskAction } from "./actions/createUserTaskAction";
@@ -172,7 +172,7 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
 
   useEffect(() => {
     (async () => {
-      const { data, message, status } = await getCategoryData();
+      const { data, message, status } = await getCategoriesData();
 
       if (status === "error") {
         setErrorMessage(errorObj => ({ ...errorObj, categoryError: message }));

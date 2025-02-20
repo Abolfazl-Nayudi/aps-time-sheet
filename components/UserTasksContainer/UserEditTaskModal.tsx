@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import { add, compareAsc, format, parse, parseISO } from "date-fns";
+import { format, parse } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -14,8 +14,9 @@ import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
 import { getCategoriesData } from "../AdminTasksContainer/actions/getCategoriesData";
 import SnackBarComponent from "../SnackBar";
-import { CustomTaskDataType } from ".";
-import { createUserCustomTaskAction } from "./actions/createUserCustomTaskAction";
+import { UserTaskDataType } from ".";
+import { editUserTaskAction } from "./actions/editUserTaskAction";
+import { getTasksOfOneCategory } from "./actions/getTasksOfOneCategory";
 
 const style = {
   position: "absolute",
@@ -32,27 +33,42 @@ const style = {
 type PropsType = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
-  userCustomTasks: CustomTaskDataType[];
-  setUserCustomTasks: Dispatch<SetStateAction<[] | CustomTaskDataType[]>>;
+  dataToUpdate: UserTaskDataType;
+  setDataToUpdate: Dispatch<SetStateAction<UserTaskDataType>>;
+  userTasks: UserTaskDataType[];
+  setUserTasks: Dispatch<SetStateAction<[] | UserTaskDataType[]>>;
 };
 
-const localStartTime = new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
-const localEndTime = add(new Date(), { minutes: 1 }).toLocaleTimeString("en-US", {
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-});
-const formDataInitialValue = {
-  selectedCategory: "",
-  taskName: "",
-  date: new Date(),
-  startTime: localStartTime,
-  endTime: localEndTime,
-  notes: "",
+type CategoryTasksDataType = {
+  categoryId: string;
+  isByHour: boolean;
+  name: string;
+  id: string;
 };
 
-export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTasks, userCustomTasks }: PropsType) {
+export default function UserEditTaskModal({
+  open,
+  setOpen,
+  userTasks,
+  setUserTasks,
+  dataToUpdate,
+  setDataToUpdate,
+}: PropsType) {
   const router = useRouter();
+
+  const formDataInitialValue = {
+    selectedCategory: "",
+    selectedTask: {
+      categoryId: "",
+      isByHour: false,
+      name: "",
+      id: "",
+    },
+    date: new Date(),
+    startTime: "",
+    endTime: "",
+    notes: null as string | null,
+  };
 
   const [errorMessage, setErrorMessage] = useState({
     category: "",
@@ -62,7 +78,8 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
     duration: "",
     general: "",
   });
-  const [categoryData, setCategoryData] = useState<{ id: string; name: string }[] | []>([]);
+  const [categoriesData, setCategoriesData] = useState<{ id: string; name: string }[] | []>([]);
+  const [categoryTasks, setCategoryTasks] = useState<CategoryTasksDataType[] | []>([]);
   const [formData, setFormData] = useState(formDataInitialValue);
   const [duration, setDuration] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -72,29 +89,25 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
     setFormData(data => ({ ...data, selectedCategory: event.target.value as string }));
   };
 
-  const handleDuration = (value: string, type: "end" | "start") => {
-    setErrorMessage(errors => ({ ...errors, startTime: "", endTime: "" }));
-    const parsed = parse(value, "HH:mm", new Date());
-    if (type === "start") {
-      if (isNaN(parsed.getTime())) {
-        setErrorMessage(errors => ({ ...errors, startTime: "Invalid Time Format" }));
-        return;
-      } else {
-        setFormData(data => ({ ...data, startTime: format(parsed, "HH:mm") }));
-      }
-    }
+  const handleSelectTask = (event: SelectChangeEvent) => {
+    setFormData(data => ({ ...data, selectedTask: JSON.parse(event.target.value) }));
+  };
 
-    if (type === "end") {
-      if (isNaN(parsed.getTime())) {
-        setErrorMessage(errors => ({ ...errors, endTime: "Invalid Time Format" }));
-        return;
-      } else {
-        setFormData(data => ({ ...data, endTime: format(parsed, "HH:mm") }));
-      }
+  const handleDuration = (value: string, type: "end" | "start") => {
+    const durationType = type === "start" ? "startTime" : "endTime";
+
+    const parsed = parse(value, "HH:mm", new Date());
+    if (isNaN(parsed.getTime())) {
+      setErrorMessage(errors => ({ ...errors, [durationType]: "Invalid Time Format" }));
+      return;
+    } else {
+      setFormData(data => ({ ...data, [durationType]: format(parsed, "HH:mm") }));
     }
   };
 
   const handleCalcClick = () => {
+    console.log("hi");
+    console.log(formData);
     if (formData.startTime && formData.endTime) {
       const { data, status } = timeGapCalculator(formData.startTime, formData.endTime);
       if (status === "error") return setErrorMessage(errors => ({ ...errors, duration: data }));
@@ -106,61 +119,92 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
   const onSubmit = async (e: React.FormEvent) => {
     setIsLoading(true);
     e.preventDefault();
-    const { date, endTime, notes, taskName, startTime, selectedCategory } = formData;
-    const { data, message, status } = await createUserCustomTaskAction({
-      startTime,
-      endTime,
-      date,
-      notes,
-      name: taskName,
-      categoryId: selectedCategory,
-    });
 
-    if (status === "error" && message === "unauthenticated") {
-      router.push("/");
-      setIsLoading(false);
-      return;
-    }
-    if (status === "error") {
-      // setErrorMessage(errors => ({ ...errors, general: message }));
-      setSnackBarState({ open: true, text: message, status: "error" });
-
-      setIsLoading(false);
-      return;
-    }
-
-    if (data) {
-      const { categoryId, date, endTime, id, name, startTime, userId } = data;
-      setIsLoading(false);
-      setFormData(formDataInitialValue);
-      setUserCustomTasks(tasks => {
-        const newData = [
-          ...tasks,
-          {
-            categoryId,
-            date,
-            startTime,
-            endTime,
-            customTaskName: name,
-            customTaskId: id,
-            userId,
-            categoryName: categoryData.filter(category => formData.selectedCategory === category.id)[0].name,
-          },
-        ];
-        const sortedData = newData.sort((a, b) => {
-          const dateComparison = compareAsc(parseISO(a.date), parseISO(b.date));
-          if (dateComparison !== 0) return dateComparison;
-
-          // Parse and compare startTime
-          const timeA = parse(a.startTime, "HH:mm", new Date());
-          const timeB = parse(b.startTime, "HH:mm", new Date());
-          return compareAsc(timeA, timeB);
-        });
-
-        return sortedData;
+    try {
+      const { date, endTime, notes, selectedTask, startTime, selectedCategory } = formData;
+      const { data, message, status } = await editUserTaskAction({
+        id: dataToUpdate.userTaskId,
+        startTime,
+        endTime,
+        date,
+        notes,
+        taskId: selectedTask.id,
       });
-      setSnackBarState({ open: true, text: message, status: "success" });
-      setOpen(false);
+
+      if (status === "error" && message === "unauthenticated") {
+        router.push("/");
+        return;
+      }
+
+      if (status === "error") {
+        // setErrorMessage(errors => ({ ...errors, general: message }));
+        setSnackBarState({ open: true, text: message, status: "error" });
+
+        return;
+      }
+
+      if (data) {
+        const { date, endTime, notes, startTime, taskId, userId, id } = data;
+        setFormData(formDataInitialValue);
+        const updatedUserTasks = userTasks.map(userTask => {
+          if (userTask.userTaskId === id) {
+            return {
+              taskId,
+              userId,
+              date,
+              endTime,
+              startTime,
+              notes,
+              categoryId: formData.selectedCategory,
+              categoryName: categoriesData.filter(category => formData.selectedCategory === category.id)[0].name,
+              isByHour: selectedTask.isByHour,
+              taskName: selectedTask.name,
+              userTaskId: id,
+            };
+          }
+          return userTask;
+        });
+        setUserTasks(updatedUserTasks);
+
+        //   setUserTasks(tasks => {
+        //     const newData = [
+        //       ...tasks,
+        //       {
+        //         taskId,
+        //         userId,
+        //         date,
+        //         endTime,
+        //         startTime,
+        //         notes,
+        //         categoryId: formData.selectedCategory,
+        //         categoryName: categoriesData.filter(category => formData.selectedCategory === category.id)[0].name,
+        //         isByHour: selectedTask.isByHour,
+        //         taskName: selectedTask.name,
+        //         userTaskId: id,
+        //       },
+        //     ];
+
+        //     return newData.sort((a, b) => {
+        //       const dateComparison = compareAsc(parseISO(a.date), parseISO(b.date));
+        //       if (dateComparison !== 0) return dateComparison;
+
+        //       // Parse and compare startTime
+        //       const timeA = parse(a.startTime, "HH:mm", new Date());
+        //       const timeB = parse(b.startTime, "HH:mm", new Date());
+        //       return compareAsc(timeA, timeB);
+        //     });
+        //   });
+
+        setSnackBarState({ open: true, text: message, status: "success" });
+
+        setOpen(false);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setSnackBarState({ open: true, text: error.message, status: "error" });
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -173,10 +217,62 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
       }
 
       if (data) {
-        setCategoryData(data);
+        setCategoriesData(data);
       }
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (formData.selectedCategory) {
+        const { data, message, status } = await getTasksOfOneCategory(formData.selectedCategory);
+        if (status === "error") {
+          setErrorMessage(errorObj => ({ ...errorObj, taskError: message }));
+          return;
+        }
+
+        if (data) {
+          setCategoryTasks(data);
+        }
+      }
+    })();
+  }, [formData.selectedCategory]);
+
+  useEffect(() => {
+    const {
+      categoryId,
+      categoryName,
+      date,
+      endTime,
+      isByHour,
+      notes,
+      startTime,
+      taskId,
+      taskName,
+      userId,
+      userTaskId,
+    } = dataToUpdate;
+
+    setFormData(() => {
+      return {
+        selectedCategory: categoryId,
+        selectedTask: {
+          categoryId: categoryId,
+          isByHour: isByHour,
+          name: taskName,
+          id: taskId,
+        },
+        date: new Date(date),
+        startTime: startTime,
+        endTime: endTime,
+        notes: notes,
+      };
+    });
+  }, [dataToUpdate]);
+
+  useEffect(() => {
+    handleCalcClick();
+  }, [formData.endTime, formData.startTime]);
 
   return (
     <div>
@@ -207,7 +303,7 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
                     defaultValue=""
                     onChange={handleSelectCategory}
                   >
-                    {categoryData?.map(({ id, name }) => {
+                    {categoriesData?.map(({ id, name }) => {
                       return (
                         <MenuItem key={id} value={id}>
                           {name}
@@ -225,11 +321,25 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
 
               {/* ---------------------------tasks----------------------- */}
               <Box>
-                <TextField
-                  label="Task Name"
-                  onChange={e => setFormData(data => ({ ...data, taskName: e.target.value }))}
-                  fullWidth
-                />
+                <FormControl fullWidth>
+                  <InputLabel id="task">Tasks</InputLabel>
+                  <Select
+                    labelId="task"
+                    id="task"
+                    value={JSON.stringify(formData.selectedTask)}
+                    label="Tasks"
+                    defaultValue=""
+                    onChange={handleSelectTask}
+                  >
+                    {categoryTasks?.map(task => {
+                      return (
+                        <MenuItem key={task.id} value={JSON.stringify(task)}>
+                          {task.name}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
                 {errorMessage.task && (
                   <Typography variant="body2" color={"crimson"}>
                     {errorMessage.task}
@@ -237,24 +347,21 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
                 )}
               </Box>
 
-              {
+              {formData.selectedTask.isByHour && (
                 <Box display={"flex"} gap={"1rem"} alignItems={"center"}>
                   <TextField
                     label="start (hh:mm)"
-                    // value={formData.startTime}
                     defaultValue={formData.startTime}
                     onChange={e => handleDuration(e.target.value, "start")}
-                    error={!!errorMessage.startTime}
-                    helperText={errorMessage.startTime ? errorMessage.startTime : ""}
+                    // error={error}
+                    // helperText={error ? "Invalid duration format. Use hh:mm." : ""}
                     placeholder="hh:mm"
                   />
                   <TextField
                     label="end (hh:mm)"
-                    // value={formData.endTime}
                     defaultValue={formData.endTime}
                     onChange={e => handleDuration(e.target.value, "end")}
-                    error={!!errorMessage.endTime}
-                    helperText={errorMessage.endTime ? errorMessage.endTime : ""}
+                    // error={error}
                     // helperText={error ? "Invalid duration format. Use hh:mm." : ""}
                     placeholder="hh:mm"
                   />
@@ -267,7 +374,7 @@ export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTas
 
                   <Typography>{duration ? duration : "??:??"}</Typography>
                 </Box>
-              }
+              )}
               <Box>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker

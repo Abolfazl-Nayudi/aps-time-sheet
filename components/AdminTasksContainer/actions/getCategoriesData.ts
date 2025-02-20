@@ -5,7 +5,7 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categoryTable, taskTable } from "@/db/schema";
 
-export const getCategoryData = async () => {
+export const getCategoriesData = async () => {
   // const categoryData = await db.select().from(categoryTable);
 
   const categoriesWithCount = await db

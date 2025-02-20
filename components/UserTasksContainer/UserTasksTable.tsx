@@ -15,35 +15,54 @@ import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
 import { UserTaskDataType } from ".";
 import DeleteTaskModal from "./UserDeleteTaskModal";
+import UserEditTaskModal from "./UserEditTaskModal";
 
-// type StateType = {
-//   name: string;
-//   price: string | null;
-//   isByHour: boolean;
-//   hourPrice: string | null;
-//   categoryId: string;
-//   id: string;
-//   categoryName: string;
-// };
+type StateType = {
+  name: string;
+  isByHour: boolean;
+  categoryId: string;
+  id: string;
+  categoryName: string;
+};
 
 type PropsType = {
   userTasks: UserTaskDataType[];
   setUserTasks: React.Dispatch<React.SetStateAction<[] | UserTaskDataType[]>>;
 };
 
+/*
+
+  userId: string;
+  categoryId: string;
+  categoryName: string;
+  taskId: string;
+  taskName: string;
+  isByHour: boolean;
+  endTime: string;
+  startTime: string;
+  date: string;
+  notes: string | null;
+  userTaskId: string;
+
+*/
+
 export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
   const [deleteTaskModalState, setDeleteTaskModalState] = useState({ open: false, taskId: "" });
-  // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
-  // const [editModalData, setEditModalData] = useState<StateType>({
-  //   name: "",
-  //   price: "",
-  //   isByHour: false,
-  //   hourPrice: "",
-  //   categoryId: "",
-  //   id: "",
-  //   categoryName: "",
-  // });
+  const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
+  const [editModalData, setEditModalData] = useState<UserTaskDataType>({
+    userId: "",
+    categoryId: "",
+    categoryName: "",
+    taskId: "",
+    taskName: "",
+    isByHour: false,
+    endTime: "",
+    startTime: "",
+    date: "",
+    notes: null,
+    userTaskId: "",
+  });
 
   const router = useRouter();
 
@@ -88,73 +107,91 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {userTasks?.map(({ categoryName, taskName, date, endTime, notes, startTime, userTaskId }) => (
-                <TableRow
-                  key={userTaskId}
-                  sx={{
-                    cursor: "pointer",
-                    "&:last-child td, &:last-child th": { border: 0 },
-                    "&:hover": {
-                      backgroundColor: "lightgray",
-                    },
-                  }}
-                >
-                  <TableCell component="td" scope="row" align="center">
-                    {categoryName}
-                  </TableCell>
-                  <TableCell component="td" scope="row" align="center">
-                    {taskName}
-                  </TableCell>
-                  <TableCell component="td" scope="row" align="center">
-                    {date}
-                  </TableCell>
-                  <TableCell component="td" scope="row" align="center">
-                    {startTime ? startTime : "_"}
-                  </TableCell>
-                  <TableCell component={"td"} align="center">
-                    {endTime ? endTime : "_"}
-                  </TableCell>
-                  <TableCell component={"td"} align="center">
-                    {startTime && endTime ? timeGapCalculator(startTime, endTime).data : "_"}
-                  </TableCell>
-                  <TableCell component={"td"} align="center">
-                    {/* {notes} */}
-                    {!notes ? (
-                      "_"
-                    ) : notes.length >= 10 ? (
-                      <Tooltip title={notes} placement="top" arrow>
-                        <Typography>{`${notes.slice(0, 10)}...`}</Typography>
-                      </Tooltip>
-                    ) : (
-                      notes
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Button
-                      color="primary"
-                      variant="contained"
-                      sx={{ marginRight: 2 }}
-                      // onClick={() => {
-                      //   setEditModalData({
-                      //     categoryId,
-                      //     price: price ? price : "",
-                      //     isByHour,
-                      //     hourPrice: hourPrice ? hourPrice : "",
-                      //     id: taskId,
-                      //     name: taskName,
-                      //     categoryName,
-                      //   });
-                      //   setEditTaskModalOpen(true);
-                      // }}
-                    >
-                      Edit
-                    </Button>
-                    <Button color="error" variant="contained" onClick={() => handleDeleteTask(userTaskId)}>
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {userTasks?.map(
+                ({
+                  categoryName,
+                  categoryId,
+                  taskName,
+                  date,
+                  endTime,
+                  notes,
+                  startTime,
+                  userTaskId,
+                  isByHour,
+                  taskId,
+                  userId,
+                }) => (
+                  <TableRow
+                    key={userTaskId}
+                    sx={{
+                      cursor: "pointer",
+                      "&:last-child td, &:last-child th": { border: 0 },
+                      "&:hover": {
+                        backgroundColor: "lightgray",
+                      },
+                    }}
+                  >
+                    <TableCell component="td" scope="row" align="center">
+                      {categoryName}
+                    </TableCell>
+                    <TableCell component="td" scope="row" align="center">
+                      {taskName}
+                    </TableCell>
+                    <TableCell component="td" scope="row" align="center">
+                      {date}
+                    </TableCell>
+                    <TableCell component="td" scope="row" align="center">
+                      {startTime ? startTime : "_"}
+                    </TableCell>
+                    <TableCell component={"td"} align="center">
+                      {endTime ? endTime : "_"}
+                    </TableCell>
+                    <TableCell component={"td"} align="center">
+                      {startTime && endTime ? timeGapCalculator(startTime, endTime).data : "_"}
+                    </TableCell>
+                    <TableCell component={"td"} align="center">
+                      {/* {notes} */}
+                      {!notes ? (
+                        "_"
+                      ) : notes.length >= 10 ? (
+                        <Tooltip title={notes} placement="top" arrow>
+                          <Typography>{`${notes.slice(0, 10)}...`}</Typography>
+                        </Tooltip>
+                      ) : (
+                        notes
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        sx={{ marginRight: 2 }}
+                        onClick={() => {
+                          setEditModalData({
+                            categoryName,
+                            categoryId,
+                            taskName,
+                            date,
+                            endTime,
+                            notes,
+                            startTime,
+                            userTaskId,
+                            isByHour,
+                            taskId,
+                            userId,
+                          });
+                          setEditTaskModalOpen(true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button color="error" variant="contained" onClick={() => handleDeleteTask(userTaskId)}>
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ),
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -165,12 +202,14 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
         userTasks={userTasks}
         setUserTasks={setUserTasks}
       />
-      {/* <EditTaskModal
+      <UserEditTaskModal
         open={editTaskModalOpen}
         setOpen={setEditTaskModalOpen}
-        taskData={editModalData}
+        dataToUpdate={editModalData}
+        setDataToUpdate={setEditModalData}
+        userTasks={userTasks}
         setUserTasks={setUserTasks}
-      /> */}
+      />
     </Box>
   );
 }

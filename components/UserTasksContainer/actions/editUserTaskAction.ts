@@ -1,10 +1,13 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+
 import { db } from "@/db";
 import { userTaskTable } from "@/db/schema";
 import { auth } from "@/utils/authOptions";
 
 type userTaskDataType = {
+  id: string;
   startTime: string;
   endTime: string;
   date: Date;
@@ -12,7 +15,7 @@ type userTaskDataType = {
   taskId: string;
 };
 
-export const createUserTaskAction = async (userTaskData: userTaskDataType) => {
+export const editUserTaskAction = async (userTaskData: userTaskDataType) => {
   const { getUser } = await auth();
   const user = getUser();
 
@@ -22,14 +25,15 @@ export const createUserTaskAction = async (userTaskData: userTaskDataType) => {
 
   const ISOFormattedDate = userTaskData.date.toISOString().split("T")[0];
 
-  const storedTask = await db
-    .insert(userTaskTable)
-    .values({ ...userTaskData, userId: user.userId, date: ISOFormattedDate })
+  const updatedTask = await db
+    .update(userTaskTable)
+    .set({ ...userTaskData, userId: user.userId, date: ISOFormattedDate })
+    .where(eq(userTaskTable.id, userTaskData.id))
     .returning();
 
-  if (!storedTask) {
-    return { status: "error", message: "failed to store task data, try again", data: null };
+  if (!updatedTask) {
+    return { status: "error", message: "failed to update task data, try again", data: null };
   }
 
-  return { status: "success", message: "Task Created Successfully", data: storedTask[0] };
+  return { status: "success", message: "Task Created Successfully", data: updatedTask[0] };
 };

@@ -2,7 +2,7 @@
 import { Box, Button, Stack, Tab, Tabs, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { getCategoryData } from "./actions/getCategoryData";
+import { getCategoriesData } from "./actions/getCategoriesData";
 import { getTaskData } from "./actions/getTaskData";
 import AddCategoryModal from "./AddCategoryModal";
 import AddTaskModal from "./AddTaskModal";
@@ -79,7 +79,7 @@ export default function AdminTaskContainer() {
 
   useEffect(() => {
     (async () => {
-      const { data, message, status } = await getCategoryData();
+      const { data, message, status } = await getCategoriesData();
       if (status === "error") {
         setErrorMessage(errors => ({ ...errors, categoryError: message }));
         return;
