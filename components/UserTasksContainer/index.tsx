@@ -7,9 +7,7 @@ import { useEffect, useState } from "react";
 
 import { getUserCustomTasksAction } from "./actions/getUserCustomTaskAction";
 import { getUserTasksAction } from "./actions/getUserTasksAction";
-import UserAddCustomTaskModal from "./UserAddCustomTaskModal";
 import UserAddTaskModal from "./UserAddTaskModal";
-import UserCustomTasksTable from "./UserCustomTasksTable";
 import UserTasksTable from "./UserTasksTable";
 
 export type UserTaskDataType = {
@@ -114,9 +112,12 @@ const UserTasksContainer = () => {
           <Button variant="contained" onClick={() => setOpenUserAddTaskModal(true)}>
             Add Task
           </Button>
-          <Button variant="contained" onClick={() => setOpenUserAddCustomTaskModal(true)}>
+          {/* <Button
+            variant="contained"
+            onClick={() => setOpenUserAddCustomTaskModal(true)}
+          >
             Add Custom Task
-          </Button>
+          </Button> */}
         </Box>
         <Box marginTop={"4rem"}>
           <Typography variant="h4" textAlign={"center"} marginBottom={"1rem"}>
@@ -129,7 +130,7 @@ const UserTasksContainer = () => {
             </Typography>
           )}
         </Box>
-        <Box marginTop={"4rem"}>
+        {/* <Box marginTop={"4rem"}>
           <Typography variant="h4" textAlign={"center"} marginBottom={"1rem"}>
             Custom Tasks
           </Typography>
@@ -139,19 +140,19 @@ const UserTasksContainer = () => {
               {errorMessage}
             </Typography>
           )}
-        </Box>
+        </Box> */}
         <UserAddTaskModal
           open={openUserAddTaskModal}
           setOpen={setOpenUserAddTaskModal}
           userTasks={userTasks}
           setUserTasks={setUserTasks}
         />
-        <UserAddCustomTaskModal
+        {/* <UserAddCustomTaskModal
           open={openUserAddCustomTaskModal}
           setOpen={setOpenUserAddCustomTaskModal}
           userCustomTasks={userCustomTasks}
           setUserCustomTasks={setUserCustomTasks}
-        />
+        /> */}
       </Box>
     </>
   );
