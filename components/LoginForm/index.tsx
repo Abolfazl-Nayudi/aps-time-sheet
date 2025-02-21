@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import React, { useState } from "react";
@@ -86,12 +85,12 @@ const LoginForm: React.FC = () => {
       >
         {isSubmitting ? "Signing up..." : "Signup"}
       </Button>
-      <Typography variant="body2" textAlign="center">
+      {/* <Typography variant="body2" textAlign="center">
         Don&apos;t have an account?{" "}
         <Link href="/signup" style={{ textDecoration: "none", color: "#1976d2" }}>
           Sign up
         </Link>
-      </Typography>
+      </Typography> */}
 
       {errorMessage && (
         <Typography variant="body1" textAlign="center" color="crimson">

@@ -15,6 +15,13 @@
       "when": 1733936129818,
       "tag": "0001_huge_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1740119309159,
+      "tag": "0002_keen_black_widow",
+      "breakpoints": true
     }
   ]
 }
