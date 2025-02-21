@@ -44,7 +44,9 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     });
 
     return res.status(200).json({ data: response.data });
-  } catch (error) {
-    return res.status(500).send({ message: error.message });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return res.status(500).send({ message: error.message });
+    }
   }
 }

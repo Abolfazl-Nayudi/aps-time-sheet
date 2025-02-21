@@ -32,7 +32,7 @@ const appendToSheetAction = async ({ data, page, row }: ArgType) => {
   });
 
   const rows = data.map(taskData => {
-    const { categoryName, taskName, date, startTime, endTime, price, isByHour, hourPrice, notes } = taskData;
+    const { categoryName, taskName, date, startTime, endTime, price, hourPrice, notes } = taskData;
 
     let duration;
     if (startTime && endTime) {

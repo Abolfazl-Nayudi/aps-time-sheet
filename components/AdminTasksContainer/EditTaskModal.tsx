@@ -45,7 +45,7 @@ export type PropsType = {
 
 export default function EditTaskModal({ open, setOpen, taskData, setTasks, categoryData }: PropsType) {
   const [checked, setChecked] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const router = useRouter();
@@ -103,8 +103,10 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks, categ
               hourPrice,
               isByHour,
               categoryName: taskData.categoryName,
+              count: task.count,
             };
           }
+
           return task;
         });
       });
@@ -212,11 +214,11 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks, categ
               </Button>
             </Box>
           </form>
-          {errorMessage && (
+          {/* {errorMessage && (
             <Typography variant="body2" color={"crimson"}>
               {errorMessage}
             </Typography>
-          )}
+          )} */}
         </Box>
       </Modal>
       <SnackBarComponent

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,8 +8,6 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { timeGapCalculator } from "@/utils/calculateTimeGap";
 
@@ -31,7 +29,7 @@ type PropsType = {
 };
 
 export default function UserCustomTasksTable({ userCustomTasks, setUserCustomTasks }: PropsType) {
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
   // const [editTaskModalOpen, setEditTaskModalOpen] = useState(false);
   // const [editModalData, setEditModalData] = useState<StateType>({
   //   name: "",
@@ -43,9 +41,8 @@ export default function UserCustomTasksTable({ userCustomTasks, setUserCustomTas
   //   categoryName: "",
   // });
 
-  const router = useRouter();
-
   const handleDeleteTask = async (userTaskId: string) => {
+    console.log(userTaskId);
     // const { data, message, status } = await deleteUserTaskAction(userTaskId);
     // if (status === "error" && message === "unauthenticated") {
     //   router.push("/");
@@ -65,11 +62,11 @@ export default function UserCustomTasksTable({ userCustomTasks, setUserCustomTas
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
       <Box width={1000} sx={{ overflowX: "auto" }}>
-        {errorMessage && (
+        {/* {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}
           </Typography>
-        )}
+        )} */}
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 1000 }} aria-label="simple table">
             <TableHead>

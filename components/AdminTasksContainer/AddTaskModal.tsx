@@ -37,7 +37,6 @@ export type AdminAddTaskFormSchemaType = z.infer<typeof AdminAddTaskFormSchema>;
 
 export default function AddTaskModal({ open, setOpen, setTasks, categoryData }: PropsType) {
   const [checked, setChecked] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -182,11 +181,6 @@ export default function AddTaskModal({ open, setOpen, setTasks, categoryData }: 
               </Button>
             </Box>
           </form>
-          {errorMessage && (
-            <Typography variant="body2" color={"crimson"}>
-              {errorMessage}
-            </Typography>
-          )}
         </Box>
       </Modal>
       <SnackBarComponent

@@ -65,7 +65,7 @@ export default function ExportToSheetModal({ open, setOpen, tasksData }: PropsTy
   const onSubmit = async ({ page, row }: ExportModalFormValues) => {
     setErrorMessage({ sheetNames: "", general: "" });
     try {
-      const { message, status, data } = await appendToSheetAction({ page, row, data: tasksData });
+      const { message, status } = await appendToSheetAction({ page, row, data: tasksData });
       if (status === "error") {
         // setErrorMessage(errors => ({ ...errors, general: message }));
         setSnackBarState({ open: true, status: "error", text: message });

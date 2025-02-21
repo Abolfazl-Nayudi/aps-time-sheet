@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -21,17 +21,17 @@ type PropsType = {
 };
 
 export default function UserCustomTasksTable({ userCustomTasks }: PropsType) {
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
       <Box width={1000}>
-        {errorMessage && (
+        {/* {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}
           </Typography>
-        )}
+        )} */}
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>

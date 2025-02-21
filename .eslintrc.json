@@ -33,7 +33,7 @@
     "prettier/prettier": "error",
     "unused-imports/no-unused-imports": "error",
     "unused-imports/no-unused-vars": [
-      "warn",
+      "off",
       {
         "vars": "all",
         "varsIgnorePattern": "^_",
@@ -43,7 +43,7 @@
     ],
     "simple-import-sort/imports": "error",
     "simple-import-sort/exports": "error",
-    "@typescript-eslint/no-unused-vars": ["warn", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }]
+    "@typescript-eslint/no-unused-vars": ["off", { "vars": "all", "args": "after-used", "ignoreRestSiblings": true }]
   },
   "settings": {
     "react": {

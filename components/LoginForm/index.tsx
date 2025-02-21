@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,8 +8,6 @@ import { useForm } from "react-hook-form";
 // import { getServerSession } from "@/utils/authGetServerSession";
 import { LoginFormSchema, LoginFormValues } from "@/utils/zod/LoginFormSchema";
 const LoginForm: React.FC = () => {
-  const router = useRouter();
-
   const {
     register,
     handleSubmit,

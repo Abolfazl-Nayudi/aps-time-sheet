@@ -51,7 +51,7 @@ const formDataInitialValue = {
   notes: "",
 };
 
-export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTasks, userCustomTasks }: PropsType) {
+export default function UserAddCustomTaskModal({ open, setOpen, setUserCustomTasks }: PropsType) {
   const router = useRouter();
 
   const [errorMessage, setErrorMessage] = useState({
