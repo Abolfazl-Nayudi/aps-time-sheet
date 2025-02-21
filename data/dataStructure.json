@@ -1,0 +1,32 @@
+{
+  "category": {
+    "id": "234dsfdsf",
+    "name": "education"
+  },
+
+  "task": {
+    "id": "asdhf23jk",
+    "name": "basic course mentor",
+    "byHour": true,
+    "duration": "2:10:21",
+    "price": 2342343,
+    "categoryId": "234dsfdsf"
+  },
+
+  "user": {
+    "id": "sdfljh2k34jrh",
+    "firstName": "abolfazl",
+    "lastName": "nayuid",
+    "email": "abolfazl@gmail.com",
+    "password": "sdfkjh2k34hrk",
+    "role": "USER | ADMIN"
+  },
+
+  "customTasks": {
+    "id": "23sxckvjfd",
+    "categoryId": "234dsfdsf",
+    "name": "meet for design course",
+    "time": "1:30:20",
+    "date": "2020/1/1"
+  }
+}
