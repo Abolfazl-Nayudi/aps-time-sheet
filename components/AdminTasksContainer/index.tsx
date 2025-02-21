@@ -6,7 +6,7 @@ import { getCategoriesData } from "./actions/getCategoriesData";
 import { getTaskData } from "./actions/getTaskData";
 import AddCategoryModal from "./AddCategoryModal";
 import AddTaskModal from "./AddTaskModal";
-import CategoryTable from "./CategoriesTable";
+import CategoryTable from "./categoriesTable";
 import TasksTable from "./TasksTable";
 
 export type CategoryStateType = { name: string; id: string; count: number }[] | [];
