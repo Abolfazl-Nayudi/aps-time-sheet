@@ -1,28 +1,40 @@
-"use client";
+// "use client";
 
-import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import React, { useEffect } from "react";
+import { headers } from "next/headers";
+import React from "react";
+
+import { auth } from "@/utils/authOptions";
 
 import AdminLayout from "./AdminLayout";
 import UserLayout from "./UserLayout";
 
-export default function FrontLayout({ children }: { children: React.ReactNode }) {
-  const session = useSession();
+export default async function FrontLayout({ children }: { children: React.ReactNode }) {
+  // const [user, setUser] = useState<userStateType>({ userId: "", role: "" });
+  // console.log("in state", user);
+  // auth().then(({ getUser }) => {
+  //   const user = getUser();
+  //   setUser({ ...user });
+  // });
+  // const session = useSession();
+  // useEffect(() => {
+  //   if (session.status === "unauthenticated") {
+  //     signOut({ callbackUrl: "/" });
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (session.status === "unauthenticated") {
-      signOut({ callbackUrl: "/" });
-    }
-  }, []);
+  const { getUser } = await auth();
+  const user = getUser();
+  const headersList = headers();
+  const fullUrl = headersList.get("referer"); // Get the full URL from referer
+  const pathname = fullUrl ? new URL(fullUrl).pathname : "";
 
-  if (usePathname()?.includes("/admin") && session.data?.user?.role === "ADMIN") {
+  if (pathname?.includes("/admin") && user?.role === "ADMIN") {
     return (
       <>
-        <AdminLayout>{children}</AdminLayout>
+        <AdminLayout user={user}>{children}</AdminLayout>
       </>
     );
   }
 
-  return <UserLayout>{children}</UserLayout>;
+  return <UserLayout user={user!}>{children}</UserLayout>;
 }

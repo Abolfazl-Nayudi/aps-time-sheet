@@ -17,12 +17,15 @@ import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
+import { userAuthType } from "@/types/userStateType";
+
 interface Props {
   /**
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
    */
   window?: () => Window;
+  user: userAuthType;
 }
 
 const drawerWidth = 240;
@@ -35,8 +38,7 @@ const navItems = [
 
 export default function AdminNavbarComponent(props: Props) {
   const session = useSession();
-
-  const { window } = props;
+  const { window, user } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -92,7 +94,7 @@ export default function AdminNavbarComponent(props: Props) {
             ))}
           </Box>
 
-          {session.data?.user?.userId && (
+          {user?.userId && (
             <Button
               variant="contained"
               color="error"

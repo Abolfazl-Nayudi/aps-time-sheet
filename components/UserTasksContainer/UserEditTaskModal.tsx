@@ -106,8 +106,6 @@ export default function UserEditTaskModal({
   };
 
   const handleCalcClick = () => {
-    console.log("hi");
-    console.log(formData);
     if (formData.startTime && formData.endTime) {
       const { data, status } = timeGapCalculator(formData.startTime, formData.endTime);
       if (status === "error") return setErrorMessage(errors => ({ ...errors, duration: data }));

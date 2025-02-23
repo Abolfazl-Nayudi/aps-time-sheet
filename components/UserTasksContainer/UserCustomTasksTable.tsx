@@ -42,7 +42,6 @@ export default function UserCustomTasksTable({ userCustomTasks, setUserCustomTas
   // });
 
   const handleDeleteTask = async (userTaskId: string) => {
-    console.log(userTaskId);
     // const { data, message, status } = await deleteUserTaskAction(userTaskId);
     // if (status === "error" && message === "unauthenticated") {
     //   router.push("/");

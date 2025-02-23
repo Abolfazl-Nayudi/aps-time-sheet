@@ -26,8 +26,6 @@ const getSheetNames = async () => {
     return { status: "error", message: "Failed to get sheet names", data: null };
   }
 
-  console.log(sheetNames);
-
   return { status: "success", message: "", data: sheetNames };
 };
 

@@ -41,7 +41,6 @@ export const deleteCategory = async (categoryId: string) => {
       data: deletedCategory[0],
     };
   } catch (error) {
-    console.error("Error deleting category:", error);
     return {
       status: "error",
       message: "An error occurred while trying to delete the category.",

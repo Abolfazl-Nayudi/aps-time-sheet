@@ -38,8 +38,6 @@ export const getTaskData = async () => {
       count: Number(task.count || 0),
     }));
 
-    console.log(updatedTaskData);
-
     return {
       status: "success",
       message: "Tasks data retrieved successfully.",

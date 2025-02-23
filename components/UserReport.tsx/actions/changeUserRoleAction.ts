@@ -29,6 +29,5 @@ export const changeUserRoleAction = async (userId: string, role: roleEnum) => {
     return { status: "error", message: "there is an error in changing user role, try again", data: null };
   }
 
-  console.log(res[0]);
   return { status: "success", message: "user role changed successfully", data: res[0] };
 };
