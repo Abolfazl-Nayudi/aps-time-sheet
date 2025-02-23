@@ -14,7 +14,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
 
 import { userAuthType } from "@/types/userStateType";
@@ -37,7 +37,6 @@ const navItems = [
 // const navItems = ["Home", "About", "Contact"];
 
 export default function AdminNavbarComponent(props: Props) {
-  const session = useSession();
   const { window, user } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 

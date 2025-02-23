@@ -1,6 +1,5 @@
 // "use client";
 
-import { headers } from "next/headers";
 import React from "react";
 
 import { auth } from "@/utils/authOptions";
@@ -24,11 +23,8 @@ export default async function FrontLayout({ children }: { children: React.ReactN
 
   const { getUser } = await auth();
   const user = getUser();
-  const headersList = headers();
-  const fullUrl = headersList.get("referer"); // Get the full URL from referer
-  const pathname = fullUrl ? new URL(fullUrl).pathname : "";
 
-  if (pathname?.includes("/admin") && user?.role === "ADMIN") {
+  if (user?.role === "ADMIN") {
     return (
       <>
         <AdminLayout user={user}>{children}</AdminLayout>
