@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Typography } from "@mui/material";
-import { compareAsc, parse, parseISO } from "date-fns";
+import { compareAsc, compareDesc, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -59,13 +59,13 @@ const UserTasksContainer = () => {
 
       if (data) {
         const sortedTaskData = data.sort((a, b) => {
-          const dateComparison = compareAsc(parseISO(a.date), parseISO(b.date));
+          const dateComparison = compareDesc(parseISO(a.date), parseISO(b.date));
           if (dateComparison !== 0) return dateComparison;
 
           // Parse and compare startTime
           const timeA = parse(a.startTime, "HH:mm", new Date());
           const timeB = parse(b.startTime, "HH:mm", new Date());
-          return compareAsc(timeA, timeB);
+          return compareDesc(timeA, timeB);
         });
 
         setUserTasks(sortedTaskData);

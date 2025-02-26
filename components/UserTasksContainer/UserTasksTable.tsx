@@ -87,7 +87,7 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
       <Box
-        width={1000}
+        width={1200}
         sx={{
           overflowX: "auto",
           boxShadow: `0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);`,
@@ -99,9 +99,10 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
           </Typography>
         )}
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 1000, boxShadow: "none" }} aria-label="simple table">
+          <Table sx={{ minWidth: 1200, boxShadow: "none" }} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell align="center">Number</TableCell>
                 <TableCell align="center">Category</TableCell>
                 <TableCell align="center">Task</TableCell>
                 <TableCell align="center">Date</TableCell>
@@ -114,19 +115,22 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
             </TableHead>
             <TableBody>
               {userTasks?.map(
-                ({
-                  categoryName,
-                  categoryId,
-                  taskName,
-                  date,
-                  endTime,
-                  notes,
-                  startTime,
-                  userTaskId,
-                  isByHour,
-                  taskId,
-                  userId,
-                }) => (
+                (
+                  {
+                    categoryName,
+                    categoryId,
+                    taskName,
+                    date,
+                    endTime,
+                    notes,
+                    startTime,
+                    userTaskId,
+                    isByHour,
+                    taskId,
+                    userId,
+                  },
+                  index,
+                ) => (
                   <TableRow
                     key={userTaskId}
                     sx={{
@@ -137,6 +141,9 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
                       },
                     }}
                   >
+                    <TableCell component="td" scope="row" align="center">
+                      {index + 1}
+                    </TableCell>
                     <TableCell component="td" scope="row" align="center">
                       {categoryName}
                     </TableCell>
