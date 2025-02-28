@@ -5,7 +5,7 @@ import Typography from "@mui/material/Typography";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
-import { compareAsc, format, parse, parseISO } from "date-fns";
+import { compareDesc, format, parse, parseISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
@@ -155,13 +155,13 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
         ];
 
         return newData.sort((a, b) => {
-          const dateComparison = compareAsc(parseISO(a.date), parseISO(b.date));
+          const dateComparison = compareDesc(parseISO(a.date), parseISO(b.date));
           if (dateComparison !== 0) return dateComparison;
 
           // Parse and compare startTime
           const timeA = parse(a.startTime, "HH:mm", new Date());
           const timeB = parse(b.startTime, "HH:mm", new Date());
-          return compareAsc(timeA, timeB);
+          return compareDesc(timeA, timeB);
         });
       });
       setSnackBarState({ open: true, text: message, status: "success" });
