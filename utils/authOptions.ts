@@ -20,7 +20,7 @@ const authOption: AuthOptions = {
   // adapter: DrizzleAdapter(db),
   session: {
     strategy: "jwt",
-    maxAge: 12 * 60 * 60, // 12h
+    maxAge: 7 * 24 * 60 * 60, // a week
   },
   pages: {
     signIn: "/login",
