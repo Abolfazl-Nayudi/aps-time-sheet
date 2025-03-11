@@ -12,11 +12,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
+import logo from "@/public/Logo/dark-mode.png";
 import { userAuthType } from "@/types/userStateType";
 
 interface Props {
@@ -38,18 +40,19 @@ const navItems = [
 
 export default function UserNavbarComponent(props: Props) {
   const session = useSession();
+  const pathname = usePathname();
+
   const { window, user } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const handleDrawerToggle = () => {
     setMobileOpen(prevState => !prevState);
   };
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
-      </Typography>
+      <Box component="div" sx={{ flexGrow: 1, marginY: 2, display: { xs: "block", sm: "none" } }}>
+        <Image src={logo} alt="logo" width={50} />
+      </Box>
       <Divider />
       <List>
         {navItems.map(({ name, path }) => (
@@ -70,7 +73,7 @@ export default function UserNavbarComponent(props: Props) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar component="nav" sx={{ position: "static" }}>
+      <AppBar component="nav" sx={{ position: "static", backgroundColor: "#ffffff" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <IconButton
             color="inherit"
@@ -81,17 +84,33 @@ export default function UserNavbarComponent(props: Props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
-            MUI
-          </Typography>
+
+          <Box component="div" sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
+            <Image src={logo} alt="logo" width={50} />
+          </Box>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map(({ name, path }) => (
-              <Button key={name} sx={{ color: "#fff" }}>
-                <Link href={path} style={{ color: "inherit", textDecoration: "none" }}>
+            {user ? (
+              navItems.map(({ name, path }) => (
+                <Button
+                  key={name}
+                  LinkComponent={Link}
+                  href={path}
+                  sx={{
+                    color: `${pathname === path ? "#e74924" : "black"}`,
+                    "&:hover": { color: "#e74924", background: "none" },
+                  }}
+                  disableRipple
+                >
                   {name}
+                </Button>
+              ))
+            ) : (
+              <Button variant="contained" sx={{ textTransform: "none", fontSize: 16 }}>
+                <Link href={"/login"} style={{ textDecoration: "none", color: "inherit" }}>
+                  Log In
                 </Link>
               </Button>
-            ))}
+            )}
           </Box>
           {user?.userId && (
             <Button

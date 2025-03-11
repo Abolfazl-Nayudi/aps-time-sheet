@@ -12,11 +12,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 
+import logo from "@/public/Logo/dark-mode.png";
 import { userAuthType } from "@/types/userStateType";
 
 interface Props {
@@ -37,6 +39,9 @@ const navItems = [
 // const navItems = ["Home", "About", "Contact"];
 
 export default function AdminNavbarComponent(props: Props) {
+  const pathname = usePathname();
+  console.log(pathname);
+
   const { window, user } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -46,9 +51,9 @@ export default function AdminNavbarComponent(props: Props) {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
-      </Typography>
+      <Box component="div" sx={{ flexGrow: 1, marginY: 2, display: { xs: "block", sm: "none" } }}>
+        <Image src={logo} alt="logo" width={50} />
+      </Box>
       <Divider />
       <List>
         {navItems.map(({ name, path }) => (
@@ -69,7 +74,7 @@ export default function AdminNavbarComponent(props: Props) {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar component="nav" sx={{ position: "static" }}>
+      <AppBar component="nav" sx={{ position: "static", backgroundColor: "#ffffff" }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -80,15 +85,22 @@ export default function AdminNavbarComponent(props: Props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
-            MUI
-          </Typography>
+          <Box component="div" sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}>
+            <Image src={logo} alt="logo" width={50} />
+          </Box>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map(({ name, path }) => (
-              <Button key={name} sx={{ color: "#fff" }}>
-                <Link href={path} style={{ color: "inherit", textDecoration: "none" }}>
-                  {name}
-                </Link>
+              <Button
+                key={name}
+                LinkComponent={Link}
+                href={path}
+                sx={{
+                  color: `${pathname === path ? "#e74924" : "black"}`,
+                  "&:hover": { color: "#e74924", background: "none" },
+                }}
+                disableRipple
+              >
+                {name}
               </Button>
             ))}
           </Box>
