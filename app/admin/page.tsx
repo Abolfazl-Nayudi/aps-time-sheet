@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import AdminPanelContainer from "@/components/Admin/AdminPanel";
 import { auth } from "@/utils/authOptions";
 
 export default async function page() {
@@ -12,13 +13,13 @@ export default async function page() {
   }
 
   return (
-    <Box sx={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
-      <Typography textAlign={"center"} variant="h3" component={"h1"}>
-        Welcome to Admin Panel
-      </Typography>
-      <Typography textAlign={"center"} variant="h6">
-        Use Navbar to navigate between pages
-      </Typography>
-    </Box>
+    <>
+      <Box sx={{ marginTop: "5rem" }}>
+        <Typography textAlign={"center"} variant="h4" component={"h1"}>
+          Welcome to Admin Panel
+        </Typography>
+        <AdminPanelContainer />
+      </Box>
+    </>
   );
 }

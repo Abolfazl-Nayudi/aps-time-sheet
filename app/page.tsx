@@ -16,7 +16,8 @@ const Home = async () => {
         {user?.userId ? (
           <Button variant="contained" sx={{ textTransform: "none", fontSize: 20 }}>
             <Link
-              href={user.role === "ADMIN" ? "/admin" : "/dashboard"}
+              // href={user.role === "ADMIN" ? "/admin" : "/dashboard"}
+              href="/dashboard"
               style={{ textDecoration: "none", color: "inherit" }}
             >
               Go To Dashboard
