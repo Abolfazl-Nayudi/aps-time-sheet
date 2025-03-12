@@ -59,6 +59,10 @@ const ChangePasswordPage = () => {
 
       if (status === "success") {
         setSnackBarState({ open: true, text: message, status: "success" });
+        reset();
+        setTimeout(() => {
+          router.push("/dashboard");
+        }, 1000);
       }
     } catch (error: unknown) {
       if (error instanceof Error) {

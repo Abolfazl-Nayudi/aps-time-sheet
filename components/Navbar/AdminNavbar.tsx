@@ -33,8 +33,9 @@ interface Props {
 const drawerWidth = 240;
 const navItems = [
   { name: "Home", path: "/" },
-  { name: "Users", path: "/admin/users" },
-  { name: "Tasks", path: "/admin/tasks" },
+  { name: "My Tasks", path: "dashboard/tasks" },
+  { name: "Dashboard", path: "/dashboard" },
+  { name: "Admin Panel", path: "/admin" },
 ];
 // const navItems = ["Home", "About", "Contact"];
 
@@ -96,7 +97,24 @@ export default function AdminNavbarComponent(props: Props) {
                 href={path}
                 sx={{
                   color: `${pathname === path ? "#e74924" : "black"}`,
-                  "&:hover": { color: "#e74924", background: "none" },
+                  position: "relative",
+                  textTransform: "capitalize",
+
+                  "&:hover": { color: "#e74924", background: "none", "&::after": { width: "90%" } },
+                  "&::after": {
+                    content: `" "`,
+                    display: "inline-block",
+                    position: "absolute",
+                    transition: "all .2s ease",
+                    bottom: 0,
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: `${pathname === path ? "90%" : "0%"}`,
+                    height: 3,
+                    backgroundColor: "#e74924",
+                    borderRadius: "5px",
+                    // borderBottom: `${pathname === path ? "1px solid #e74924" : "none"}`,
+                  },
                 }}
                 disableRipple
               >
