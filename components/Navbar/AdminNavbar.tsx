@@ -33,7 +33,7 @@ interface Props {
 const drawerWidth = 240;
 const navItems = [
   { name: "Home", path: "/" },
-  { name: "My Tasks", path: "dashboard/tasks" },
+  { name: "My Tasks", path: "/dashboard/tasks" },
   { name: "Dashboard", path: "/dashboard" },
   { name: "Admin Panel", path: "/admin" },
 ];
