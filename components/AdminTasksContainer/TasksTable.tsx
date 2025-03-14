@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -50,14 +50,14 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
 
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"} marginTop={"4rem"}>
-      <Box width={1000}>
+      <Box width={1200}>
         {/* {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}
           </Typography>
         )} */}
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 1200 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell align="center">Category</TableCell>
@@ -85,7 +85,9 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
                     {categoryName}
                   </TableCell>
                   <TableCell component="th" scope="row" align="center">
-                    {taskName}
+                    <Tooltip title={taskName} placement="top" arrow>
+                      <Typography>{`${taskName.slice(0, 25)}...`}</Typography>
+                    </Tooltip>
                   </TableCell>
                   <TableCell component="th" scope="row" align="center">
                     {price ? price : "_"}
