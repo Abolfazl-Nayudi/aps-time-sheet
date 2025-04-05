@@ -50,7 +50,7 @@ export default function TasksTable({ tasks, setTasks, categoryData }: PropsType)
 
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"} marginTop={"4rem"}>
-      <Box width={1200}>
+      <Box width={1200} overflow={"auto"}>
         {/* {errorMessage && (
           <Typography variant="body2" color={"crimson"}>
             {errorMessage}

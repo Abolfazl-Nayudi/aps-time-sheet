@@ -76,11 +76,10 @@ export default function UserNavbarComponent(props: Props) {
       <AppBar component="nav" sx={{ position: "static", backgroundColor: "#ffffff" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { sm: "none" } }}
+            sx={{ mr: 2, display: { sm: "none" }, color: "#000" }}
           >
             <MenuIcon />
           </IconButton>
