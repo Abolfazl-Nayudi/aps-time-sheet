@@ -72,7 +72,10 @@ export default function AdminTaskContainer() {
         return;
       }
       if (data) {
-        setTaskData(data);
+        const sortedData = [...data].sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+        console.log(sortedData);
+        // console.log(data.sort());
+        setTaskData(sortedData);
       }
     })();
   }, []);

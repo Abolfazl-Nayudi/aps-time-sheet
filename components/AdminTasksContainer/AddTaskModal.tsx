@@ -82,7 +82,13 @@ export default function AddTaskModal({ open, setOpen, setTasks, categoryData }: 
     if (status === "success") {
       if (createdTask) {
         const { name, id, ...restOfData } = createdTask;
-        setTasks(tasks => [...tasks, { ...restOfData, taskName: name, taskId: id }]);
+        setTasks(tasks => {
+          const allSortedTasks = [...tasks, { ...restOfData, taskName: name, taskId: id }].sort((a, b) =>
+            a.categoryName.localeCompare(b.categoryName),
+          );
+
+          return allSortedTasks;
+        });
         reset();
         setOpen(false);
         setSnackBarState({ open: true, status: "success", text: message });
