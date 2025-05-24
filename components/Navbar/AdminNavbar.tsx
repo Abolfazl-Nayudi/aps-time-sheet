@@ -41,7 +41,6 @@ const navItems = [
 
 export default function AdminNavbarComponent(props: Props) {
   const pathname = usePathname();
-  console.log(pathname);
 
   const { window, user } = props;
   const [mobileOpen, setMobileOpen] = useState(false);

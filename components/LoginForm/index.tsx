@@ -27,8 +27,14 @@ const LoginForm: React.FC = () => {
     setSuccessMessage("");
     try {
       const res = await signIn("credentials", { email, password, redirect: false });
+
+      if (res?.error === "CredentialsSignin") {
+        setErrorMessage("The email or password is wrong");
+        return;
+      }
+
       if (res?.error) {
-        setErrorMessage(res.error);
+        setErrorMessage("There is a problem, please try again later");
       }
 
       if (res?.ok) {

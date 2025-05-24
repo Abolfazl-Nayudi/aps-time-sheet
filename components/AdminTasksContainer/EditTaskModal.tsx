@@ -210,7 +210,7 @@ export default function EditTaskModal({ open, setOpen, taskData, setTasks, categ
             </Box>
             <Box display={"flex"} flexDirection={"column"}>
               <Button type="submit" variant="contained">
-                Add Task
+                Edit Task
               </Button>
             </Box>
           </form>

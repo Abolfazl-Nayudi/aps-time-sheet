@@ -81,7 +81,7 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
   };
 
   const handleSelectTask = (event: SelectChangeEvent) => {
-    setFormData(data => ({ ...data, selectedTask: JSON.parse(event.target.value) }));
+    setFormData(data => ({ ...data, selectedTask: categoryTasks.find(task => task.id === event.target.value)! }));
   };
 
   const handleDuration = (value: string, type: "end" | "start") => {
@@ -228,6 +228,7 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
                     label="Category"
                     defaultValue=""
                     onChange={handleSelectCategory}
+                    required
                   >
                     {categoryData?.map(({ id, name }) => {
                       return (
@@ -252,14 +253,16 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
                   <Select
                     labelId="task"
                     id="task"
-                    value={JSON.stringify(formData.selectedTask)}
+                    data-select-value={JSON.stringify(formData.selectedTask)}
+                    value={formData.selectedTask.id}
                     label="Tasks"
                     defaultValue=""
                     onChange={handleSelectTask}
+                    required
                   >
                     {categoryTasks?.map(task => {
                       return (
-                        <MenuItem key={task.id} value={JSON.stringify(task)}>
+                        <MenuItem key={task.id} value={task.id}>
                           {task.name}
                         </MenuItem>
                       );
@@ -277,11 +280,13 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
                 <Box display={"flex"} gap={"1rem"} alignItems={"center"}>
                   <TextField
                     label="start (hh:mm)"
-                    // value={formData.startTime}
                     onChange={e => handleDuration(e.target.value, "start")}
-                    // error={error}
-                    // helperText={error ? "Invalid duration format. Use hh:mm." : ""}
                     placeholder="hh:mm"
+                    required
+                    inputProps={{
+                      pattern: "^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$", // Regex for hh:mm format
+                    }}
+                    // helperText="Please enter a valid time in hh:mm format."
                   />
                   <TextField
                     label="end (hh:mm)"
@@ -290,6 +295,10 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
                     // error={error}
                     // helperText={error ? "Invalid duration format. Use hh:mm." : ""}
                     placeholder="hh:mm"
+                    required
+                    inputProps={{
+                      pattern: "^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$", // Regex for hh:mm format
+                    }}
                   />
 
                   {/* ------------------------------ */}
