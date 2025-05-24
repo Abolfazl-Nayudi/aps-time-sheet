@@ -76,15 +76,12 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
   const [isLoading, setIsLoading] = useState(false);
   const [snackBarState, setSnackBarState] = useState<snackBarStateType>({ open: false, text: "", status: "success" });
 
-  console.log(formData);
-
   const handleSelectCategory = (event: SelectChangeEvent) => {
     setFormData(data => ({ ...data, selectedCategory: event.target.value as string }));
   };
 
   const handleSelectTask = (event: SelectChangeEvent) => {
     setFormData(data => ({ ...data, selectedTask: categoryTasks.find(task => task.id === event.target.value)! }));
-    console.log(event.target);
   };
 
   const handleDuration = (value: string, type: "end" | "start") => {
@@ -136,7 +133,6 @@ export default function UserAddTaskModal({ open, setOpen, setUserTasks }: PropsT
     }
 
     if (data) {
-      console.log("data", data);
       const { date, endTime, notes, startTime, taskId, userId, id } = data;
       setIsLoading(false);
       setFormData(formDataInitialValue);

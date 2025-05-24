@@ -29,7 +29,6 @@ const LoginForm: React.FC = () => {
       const res = await signIn("credentials", { email, password, redirect: false });
 
       if (res?.error === "CredentialsSignin") {
-        console.log(res);
         setErrorMessage("The email or password is wrong");
         return;
       }
