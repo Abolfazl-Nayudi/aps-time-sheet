@@ -46,6 +46,8 @@ type PropsType = {
 
 */
 
+const tableHeaders = ["Number", "Category", "Task", "Start Time", "End Time", "Duration", "Note", "Actions"];
+
 export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
   const [errorMessage, setErrorMessage] = useState("");
   const [deleteTaskModalState, setDeleteTaskModalState] = useState({ open: false, taskId: "" });
@@ -84,6 +86,8 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
     // }
   };
 
+  let previousDate = "";
+
   return (
     <Box component={"section"} display={"flex"} justifyContent={"center"}>
       <Box
@@ -102,15 +106,13 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
           <Table sx={{ minWidth: 1200, boxShadow: "none" }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="center">Number</TableCell>
-                <TableCell align="center">Category</TableCell>
-                <TableCell align="center">Task</TableCell>
-                <TableCell align="center">Date</TableCell>
-                <TableCell align="center">Start Time</TableCell>
-                <TableCell align="center">End Time</TableCell>
-                <TableCell align="center">Duration</TableCell>
-                <TableCell align="center">Note</TableCell>
-                <TableCell align="center">Actions</TableCell>
+                {tableHeaders.map((title, i) => {
+                  return (
+                    <TableCell align="center" key={i}>
+                      {title}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -130,80 +132,97 @@ export default function UserTasksTable({ userTasks, setUserTasks }: PropsType) {
                     userId,
                   },
                   index,
-                ) => (
-                  <TableRow
-                    key={userTaskId}
-                    sx={{
-                      cursor: "pointer",
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      "&:hover": {
-                        backgroundColor: "lightgray",
-                      },
-                    }}
-                  >
-                    <TableCell component="td" scope="row" align="center">
-                      {index + 1}
-                    </TableCell>
-                    <TableCell component="td" scope="row" align="center">
-                      {categoryName}
-                    </TableCell>
-                    <TableCell component="td" scope="row" align="center">
-                      {taskName}
-                    </TableCell>
-                    <TableCell component="td" scope="row" align="center">
-                      {date}
-                    </TableCell>
-                    <TableCell component="td" scope="row" align="center">
-                      {startTime ? startTime : "_"}
-                    </TableCell>
-                    <TableCell component={"td"} align="center">
-                      {endTime ? endTime : "_"}
-                    </TableCell>
-                    <TableCell component={"td"} align="center">
-                      {startTime && endTime ? timeGapCalculator(startTime, endTime).data : "_"}
-                    </TableCell>
-                    <TableCell component={"td"} align="center">
-                      {/* {notes} */}
-                      {!notes ? (
-                        "_"
-                      ) : notes.length >= 10 ? (
-                        <Tooltip title={notes} placement="top" arrow>
-                          <Typography>{`${notes.slice(0, 10)}...`}</Typography>
-                        </Tooltip>
-                      ) : (
-                        notes
+                ) => {
+                  const isNewDate = previousDate !== date;
+                  previousDate = date;
+                  const solarDate = new Intl.DateTimeFormat("fa-IR").format(new Date(previousDate));
+
+                  return (
+                    <>
+                      {isNewDate && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={tableHeaders.length}
+                            sx={{ fontWeight: "bold", fontSize: 18, textAlign: "center" }}
+                          >
+                            {previousDate} | {solarDate}
+                          </TableCell>
+                        </TableRow>
                       )}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        sx={{ marginRight: 2 }}
-                        onClick={() => {
-                          setEditModalData({
-                            categoryName,
-                            categoryId,
-                            taskName,
-                            date,
-                            endTime,
-                            notes,
-                            startTime,
-                            userTaskId,
-                            isByHour,
-                            taskId,
-                            userId,
-                          });
-                          setEditTaskModalOpen(true);
+
+                      <TableRow
+                        key={userTaskId}
+                        sx={{
+                          cursor: "pointer",
+                          "&:last-child td, &:last-child th": { border: 0 },
+                          "&:hover": {
+                            backgroundColor: "lightgray",
+                          },
                         }}
                       >
-                        Edit
-                      </Button>
-                      <Button color="error" variant="contained" onClick={() => handleDeleteTask(userTaskId)}>
-                        Delete
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ),
+                        <TableCell component="td" scope="row" align="center">
+                          {index + 1}
+                        </TableCell>
+                        <TableCell component="td" scope="row" align="center">
+                          {categoryName}
+                        </TableCell>
+                        <TableCell component="td" scope="row" align="center">
+                          {taskName}
+                        </TableCell>
+
+                        <TableCell component="td" scope="row" align="center">
+                          {startTime ? startTime : "_"}
+                        </TableCell>
+                        <TableCell component={"td"} align="center">
+                          {endTime ? endTime : "_"}
+                        </TableCell>
+                        <TableCell component={"td"} align="center">
+                          {startTime && endTime ? timeGapCalculator(startTime, endTime).data : "_"}
+                        </TableCell>
+                        <TableCell component={"td"} align="center">
+                          {/* {notes} */}
+                          {!notes ? (
+                            "_"
+                          ) : notes.length >= 10 ? (
+                            <Tooltip title={notes} placement="top" arrow>
+                              <Typography>{`${notes.slice(0, 10)}...`}</Typography>
+                            </Tooltip>
+                          ) : (
+                            notes
+                          )}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Button
+                            color="primary"
+                            variant="contained"
+                            sx={{ marginRight: 2 }}
+                            onClick={() => {
+                              setEditModalData({
+                                categoryName,
+                                categoryId,
+                                taskName,
+                                date,
+                                endTime,
+                                notes,
+                                startTime,
+                                userTaskId,
+                                isByHour,
+                                taskId,
+                                userId,
+                              });
+                              setEditTaskModalOpen(true);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button color="error" variant="contained" onClick={() => handleDeleteTask(userTaskId)}>
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  );
+                },
               )}
             </TableBody>
           </Table>
