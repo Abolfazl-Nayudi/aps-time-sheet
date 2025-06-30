@@ -1,6 +1,19 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -23,6 +36,10 @@ const SignupForm: React.FC<{ type: "ADMIN" | "USER" }> = ({ type }) => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(show => !show);
 
   const onSubmit = async (data: SignupFormValues) => {
     setErrorMessage("");
@@ -85,20 +102,52 @@ const SignupForm: React.FC<{ type: "ADMIN" | "USER" }> = ({ type }) => {
         error={!!errors.email}
         helperText={errors.email?.message}
       />
-      <TextField
-        label="Password"
-        type="password"
-        {...register("password")}
-        error={!!errors.password}
-        helperText={errors.password?.message}
-      />
-      <TextField
-        label="Confirm Password"
-        type="password"
-        {...register("confirmPassword")}
-        error={!!errors.confirmPassword}
-        helperText={errors.confirmPassword?.message}
-      />
+
+      <FormControl variant="outlined">
+        <InputLabel htmlFor="Password">Password</InputLabel>
+        <OutlinedInput
+          id="Password"
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          {...register("password")}
+          error={!!errors.password}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                // aria-label={showPassword ? "hide the password" : "display the password"}
+                onClick={() => setShowPassword(show => !show)}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+        <FormHelperText>{errors.password?.message}</FormHelperText>
+      </FormControl>
+      <FormControl variant="outlined">
+        <InputLabel htmlFor="confirm-password">Confirm Password</InputLabel>
+        <OutlinedInput
+          id="confirm-password"
+          label="Confirm Passowrd"
+          type={showConfirmPassword ? "text" : "password"}
+          {...register("confirmPassword")}
+          error={!!errors.password}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                // aria-label={showPassword ? "hide the password" : "display the password"}
+                onClick={() => setShowConfirmPassword(show => !show)}
+                edge="end"
+              >
+                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+        <FormHelperText>{errors.password?.message}</FormHelperText>
+      </FormControl>
+
       <Button
         type="submit"
         variant="contained"

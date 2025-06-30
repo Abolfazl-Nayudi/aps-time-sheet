@@ -1,6 +1,19 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -13,14 +26,16 @@ const LoginForm: React.FC = () => {
   const {
     register,
     handleSubmit,
-
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
   });
 
+  const [showPassword, setShowPassword] = React.useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  const handleClickShowPassword = () => setShowPassword(show => !show);
 
   const onSubmit = async ({ email, password }: LoginFormValues) => {
     setErrorMessage("");
@@ -74,13 +89,53 @@ const LoginForm: React.FC = () => {
         error={!!errors.email}
         helperText={errors.email?.message}
       />
+      <FormControl variant="outlined">
+        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+        <OutlinedInput
+          id="Password"
+          label="Password"
+          type={showPassword ? "text" : "password"}
+          {...register("password")}
+          error={!!errors.password}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                // aria-label={showPassword ? "hide the password" : "display the password"}
+                onClick={handleClickShowPassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+        <FormHelperText>{errors.password?.message}</FormHelperText>
+      </FormControl>
+
+      {/* 
       <TextField
         label="Password"
-        type="password"
+        id="password"
+        type={showPassword ? "text" : "password"}
+        // variant="filled"
         {...register("password")}
         error={!!errors.password}
         helperText={errors.password?.message}
-      />
+        inputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label={showPassword ? "hide the password" : "display the password"}
+                onClick={handleClickShowPassword}
+                edge="end"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      /> */}
+
       <Button
         type="submit"
         variant="contained"
@@ -88,14 +143,8 @@ const LoginForm: React.FC = () => {
         disabled={isSubmitting}
         startIcon={isSubmitting && <CircularProgress size={20} color="inherit" />} // Add spinner
       >
-        {isSubmitting ? "Signing up..." : "Signup"}
+        {isSubmitting ? "Logging in..." : "Login"}
       </Button>
-      {/* <Typography variant="body2" textAlign="center">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" style={{ textDecoration: "none", color: "#1976d2" }}>
-          Sign up
-        </Link>
-      </Typography> */}
 
       {errorMessage && (
         <Typography variant="body1" textAlign="center" color="crimson">
